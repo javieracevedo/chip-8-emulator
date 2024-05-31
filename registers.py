@@ -1,6 +1,21 @@
-# V can contains 16 registers that each can store 8 bytes values
-V = []
+V = [
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00
+]
 
-# I register can store one address to Vx register (index of the value in V)
 I = ()
-
+VF = 0
