@@ -1,4 +1,4 @@
-MEM_SIZE_BYTES=12
+MEM_SIZE_BYTES=4096
 memory = []
 alloc_table = []
 
@@ -15,6 +15,10 @@ def init():
         memory.append(0x0)
 
 def write(addr_idx, hex_data, alloc=True):
+    if (len(memory) == 0):
+        print("Memory has not been initialized...")
+        return;
+
     if (not is_free(addr_idx)):
         print("This memory address is not free for use (addr: ", addr_idx, ")")
         return;
@@ -27,6 +31,10 @@ def write(addr_idx, hex_data, alloc=True):
     # Check if hex only has two digits
     if (hex_data > 0xFF):
         print("Hex data cannot be more than 2 digits")
+        return;
+
+    if (addr_idx > MEM_SIZE_BYTES):
+        print("Addr_idx larger than memory")
         return;
 
     memory[addr_idx] = hex_data
