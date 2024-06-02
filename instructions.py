@@ -2,18 +2,21 @@ import display
 import registers
 import memory
 import events
+import pygame
+import utils
 
 def CLS(surface):
     surface.fill(0)
+    pygame.display.flip()
 
 def LD_VX(Vx, kk):
     Vx = int(Vx)
-    registers.V[Vx] = kk
+    registers.V[Vx] = hex(int(kk, 16))
 
 def LDF_VX(Vx):
     Vx_value = registers.V[Vx]
-    Vx_addr = memory.get_addr(Vx_value)
-    if (Vx_addr != ()):
+    Vx_addr = memory.get_font_addr(Vx_value)
+    if (Vx_addr != None):
         registers.I = Vx_addr
 
 def LDX_VK(Vx):
@@ -21,7 +24,22 @@ def LDX_VK(Vx):
     registers.V[Vx] = key
 
 def DRW(Vx, Vy, surface):
-    display.scaled_draw(int(registers.V[Vx]), int(registers.V[Vy]), surface);
+    # Draw the sprite at I addr
+    #print("Wohoo: ", registers.I)
+    mem_slice = memory.memory[registers.I:registers.I+5]
+    pos_y = int(registers.V[Vy], 16)
+    for hex_str in mem_slice:
+        binary = utils.hex_to_bin(hex_str)
+        for idx in range(2, 6):
+            pixel_state = display.ON
+            if (binary[idx] == '0'):
+                pixel_state = display.OFF
+            print("Pixel State: ", pixel_state)
+            display.scaled_draw(int(registers.V[Vx], 16) + idx - 2, pos_y, pixel_state, surface);
+            
+        print()
+        pos_y += 1
+    pygame.display.flip()
 
 def execute_instructions(instructions, surface):
     for c in range(len(instructions)):

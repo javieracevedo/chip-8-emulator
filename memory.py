@@ -1,3 +1,5 @@
+import data
+
 MEM_SIZE_BYTES=4096
 memory = []
 alloc_table = []
@@ -12,7 +14,7 @@ def is_hex(s):
 
 def init():
     for i in range(MEM_SIZE_BYTES):
-        memory.append(0x0)
+        memory.append(hex(int("0x0", 16)))
 
 def write(addr_idx, hex_data, alloc=True):
     if (len(memory) == 0):
@@ -29,7 +31,7 @@ def write(addr_idx, hex_data, alloc=True):
         return;
    
     # Check if hex only has two digits
-    if (hex_data > 0xFF):
+    if (int(int(hex_data, 16) > 0xFF)):
         print("Hex data cannot be more than 2 digits")
         return;
 
@@ -45,8 +47,14 @@ def read(addr_idx):
     if (addr_idx > len(memory)):
         print("Address is larger than memory size")
         return;
-    print(memory[addr_idx])
+    #print(memory[addr_idx])
     return memory[addr_idx]
+
+def get_font_addr(value):
+    for idx in range(0x50, 0x9F + 1, 5):
+        if (data.font[value] == memory[idx:idx+5]):
+            return idx
+    return None
 
 def get_addr(value):
     for idx in range(len(memory)):
