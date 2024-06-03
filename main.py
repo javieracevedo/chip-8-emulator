@@ -4,6 +4,8 @@ import data
 import instructions
 import pygame
 import time
+import registers
+import data
 
 # Test Data
 
@@ -133,20 +135,28 @@ def run():
 
 
     instructions.CLS(surface)
-
+    
 
     pygame.event.clear()
     while running:
         pygame.display.flip()
+    
+        #Draw one of the sprites in 0x200 memory location
+        registers.V[0] = '0x1B'
+        registers.V[1] = '0x1B'
+        registers.I = 0x200
+        instructions.DRW(0, 1, 5, surface);
+
+
         instructions.execute_instructions(test_instructions, surface)
-        time.sleep(1./25)
+        time.sleep(1./60)
+
+
+
 memory.init()
 
+data.load_sprites(memory)
 data.load_font(memory)
 
-
-
 run()
-
-
 
