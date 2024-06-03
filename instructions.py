@@ -24,12 +24,12 @@ def LDX_VK(Vx):
     registers.V[Vx] = key
 
 def DRW(Vx, Vy, n, surface):
-    mem_slice = memory.memory[registers.I:registers.I+5]
+    mem_slice = memory.memory[registers.I:registers.I+n]
 
     pos_y = int(registers.V[Vy], 16)
     for hex_str in mem_slice:
         binary = utils.hex_to_bin(hex_str)
-        for idx in range(0, n):
+        for idx in range(0, 8):
             pixel_state = display.ON
             if (binary[idx] == '0'):
                 pixel_state = display.OFF
