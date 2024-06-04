@@ -10,7 +10,7 @@ import data
 # Test Data
 
 test_instructions = [
-    "00E0", # Clear the Screen
+    #"00E0", # Clear the Screen
    
     # Drawn A Sprite
     "6400", # Set X co-ordinate
@@ -59,7 +59,7 @@ test_instructions = [
     "6500",
     "6201",
     "F229",
-    "D454",
+    "D455",
 
 
     # Draw 2 Sprite
@@ -123,7 +123,9 @@ test_instructions = [
     "6506",
     "6209",
     "F229",
-    "D455"
+    "D455",
+
+    "100A"
 ]
 
 def run():
