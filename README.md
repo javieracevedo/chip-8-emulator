@@ -42,43 +42,37 @@ TODO
 
 ### Opcode table
 
-| Opcode       | Instruction                                              |
-| ------------ | -------------------------------------------------------- |
-| 00E0         | Clear screen                                             |
-| 1NNN         | Jump                                                     |               
-| 6XNN         | Set VX to NN                                             |
-| 7XNN         | Add NN to VX                                             |
-| ANNN         | Set I to NNN                                             |
-| DXYN         | Display the value in memory location I at VX VY position |
-| 0NNN         | Pause execution and execute instruction in NNN           |
-| 2NNN         | Push PC to the stack and call subroutine at NNN          |
-| 00EE         | Return from subroutine (pop last address from stack)     | 
-| 3XNN         | Conditional skip                                         |
-| 4XNN         | Conditional skip                                         |
-| 5XY0         | Conditional skip                                         |
-| 9XY0         | Conditional skip                                         |
-| 6XNN         |               |
-| 7XNN         |               |
-| 8XY0         |               |
-| 8XY1         |               |
-| 8XY2         |               |
-| 8XY3         |               |
-| 8XY4         |               |
-| 8XY5         |               |
-| 8XY6         |               |
-| 8XY7         |               |
-| 8XYE         |               |
-| BNNN         |               |
-| CXNN         |               |
-| EX9E         |               |
-| EXA1         |               |
-| FX07         |               |
-| FX15         |               |
-| FX33         |               |
-| FX55         |               |
-| FX65         |               |
-| FX18         |               |
-| FX1E         |               |
-| FX0A         |               |
-| FX29         |               |
+| Opcode        | Instruction                                              |
+| ------------  | -------------------------------------------------------- |
+| 00E0          | Clear screen                                             |
+| 1NNN          | Jump                                                     |               
+| 6XNN          | Set VX to NN                                             |
+| 7XNN          | Add NN to VX                                             |
+| ANNN          | Set I to NNN                                             |
+| DXYN          | Display the value in memory location I at VX VY position |
+| 0NNN          | Pause execution and execute instruction in NNN           |
+| 2NNN          | Push PC to the stack and call subroutine at NNN          |
+| 00EE          | Return from subroutine (pop last address from stack)     | 
+| 3XNN          | Conditional skip                                         |
+| 4XNN          | Conditional skip                                         |
+| 5XY0          | Conditional skip                                         |
+| 9XY0          | Conditional skip                                         |
+| 6XNN          | Set VX to NN                                             |
+| 7XNN          | Add NN to VX                                             |
+| 8XY0          | Set VX to the value of VY                                |
+| 8XY1          | Set VX to the result of VX || VY                         |
+| 8XY2          | Set VX to the result of VX && VY                         |
+| 8XY3          | Set VX to the result of VX ^  VY                         |       
+| 8XY4          | Set VX to the result of VX + VY (Add)                    | 
+| 8XY5/8XY7     | Set VX to the result of VX - VY (Subtract)               |
+| 8XY6/8XYE     | Shift the value of VX one bit to the right or left       |
+| BXNN          | Jump to address XNN plus the value in VX                 |
+| CXNN          | Generates a random number and binary ANDs it with NN     |
+| EX9E/EXA1     | Skip the next instruction if a key is being pressed      |
+| FX07/FX15/FX18| Timers                                                   |
+| FX55/FF66     | Store/Load registers to/from memory                      |
+| FX33          | Converts the value in VX to three decimal digits and stores them in the address in I |
+| FX1E          | Add the value of VX to I                                 |
+| FX0A          | Wait for keypress                                        |
+| FX29          | Set I to the address of the hex value in VX              |
 
