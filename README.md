@@ -41,7 +41,7 @@ The stack is used to store return addresses when subroutines are called. In the 
 ### Opcode table
 
 | Opcode        | Description                                              |
-| ------------  | -------------------------------------------------------- |
+| :---          | :---                                                     |
 | 00E0          | Clear screen                                             |
 | 1NNN          | Jump                                                     |               
 | 6XNN          | Set VX to NN                                             |
