@@ -131,20 +131,18 @@ def run():
     pygame.display.set_caption("Chip-8")
     surface = pygame.display.set_mode((640, 320))
 
-
     instructions.CLS(surface)
-
 
     pygame.event.clear()
     while running:
         pygame.display.flip()
         instructions.execute_instructions(test_instructions, surface)
         time.sleep(1./25)
+
+
 memory.init()
 
 data.load_font(memory)
-
-
 
 run()
 
