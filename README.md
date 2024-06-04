@@ -24,7 +24,7 @@ The CHIP-8 virtual machine has a built-in font. It has the characters 0 through 
 
 ### Display
 
-The display is 64x32 pixels tall (however in this implementation it's scaled). To handle graphics I'm using the SDL wrapper for python: Pygame.
+The display is 64x32 pixels tall (however in this implementation it's scaled). To handle graphics I'm using the SDL wrapper for python: pygame.
 
 
 ### Stack
