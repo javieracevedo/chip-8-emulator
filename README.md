@@ -1,44 +1,42 @@
 # Chip-8 Virtual Machine
 
-This is my implementation of the CHIP-8 virtual machine from the 1970s.
+This is my implementation of the CHIP-8 virtual machine from the 1970s. I started working on this for fun on a weekend, not thinking that I would decide to follow trough, so it is a very quick and dirty implementation, at least for now.
 
 
 ## VM Description
 
 ### Memory
 
-
-The CHIP-8 vm has 4096 addresses, each containing 8 bit, it has 4KB of space in total. The first 512 bytes were reserve for the interpreter, this is no longer necessary sine the interpreter can run natively in the hose. Modern implementations (like this one) store font data in that reserved spaced. The last 256 bytes are reserved for display refresh, and the previous 96 bytes are reserved for the call stack, internal use, and other variables.
+The CHIP-8 vm has 4096 addresses. Each contains 8 bits, for a total 4KB of space. The first 512 bytes were reserve for the interpreter, this is no longer necessary since the interpreter can run natively in the host. Modern implementations (like this one) store font data in that space. The last 256 bytes are reserved for display refresh, and the previous 96 bytes before that are reserved for the call stack, internal use, and other variables.
 
 
 ### Registers
 
-The CHIP-8 has 16 registers (V0...VF). VF is typically used for addition, and no borrow flags. Additionally there is an address register (I), which stores a 12 bit wide address (4096 addresses in total). 
+The CHIP-8 has 16 registers (V0...VF). VF is typically used for addition, and no borrow flags. Additionally there is an address register (I), which stores a 12-bit wide address (4096 addresses in total). 
 
 
 ### Font
 
-The CHIP-8 emulator has a built-in font. It has the characters 0 trough F. Here's the character sprite specs:
+The CHIP-8 virtual machine has a built-in font. It has the characters 0 trough F. Here's the character sprite specs:
 
 ![alt text](font.jpeg "Chip-8 Font Specs")
 
+
 ### Display
 
-TODO
+The display is 64x32 pixels tall (however in this implementation it's scaled). To handle graphics I'm using the SDL wrapper for python: Pygame.
+
 
 ### Stack
 
-The stack is used to store return addresses when subroutines are called. In the old days the stack allowd 12 levels of nesting, in modern implementations this is not the case.
+The stack is used to store return addresses when subroutines are called. In the old days the stack allowed 12 levels of nesting, in modern implementations this limitation doesn't exist.
+
 
 ### Timers
 
 1. Delay timer
 2. Sound timer
 
-
-### Fetch/decode/execute
-
-TODO
 
 ### Opcode table
 
@@ -75,4 +73,5 @@ TODO
 | FX1E          | Add the value of VX to I                                 |
 | FX0A          | Wait for keypress                                        |
 | FX29          | Set I to the address of the hex value in VX              |
+
 
