@@ -21,6 +21,13 @@ font = {
 }
 
 
+# 8x5 Sprites
+sprites = [
+        '0x18', '0x18', '0x7e', '0x7e', '0x7e',
+        '0x66', '0x66', '0x7e', '0x7e', '0x7e'
+]
+
+
 font_list = [
         font["0x0"], 
         font["0x1"], 
@@ -46,3 +53,8 @@ def load_font(memory):
     #print(len(flattened_font))
     for i in range(0x50, 0x9F + 1):
         memory.write(i, flattened_font[i % 80])
+
+def load_sprites(memory):
+    for idx in range(0, len(sprites)):
+        memory.write(0x200 + idx, sprites[idx])
+    

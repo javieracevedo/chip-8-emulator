@@ -4,6 +4,8 @@ import data
 import instructions
 import pygame
 import time
+import registers
+import data
 
 # Test Data
 
@@ -136,15 +138,15 @@ def run():
     pygame.event.clear()
     while running:
         pygame.display.flip()
+
         instructions.execute_instructions(test_instructions, surface)
         time.sleep(1./25)
 
 
 memory.init()
 
+data.load_sprites(memory)
 data.load_font(memory)
 
 run()
-
-
 
