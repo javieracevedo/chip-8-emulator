@@ -133,24 +133,14 @@ def run():
     pygame.display.set_caption("Chip-8")
     surface = pygame.display.set_mode((640, 320))
 
-
     instructions.CLS(surface)
-    
 
     pygame.event.clear()
     while running:
         pygame.display.flip()
-    
-        #Draw one of the sprites in 0x200 memory location
-        registers.V[0] = '0x1B'
-        registers.V[1] = '0x1B'
-        registers.I = 0x200
-        instructions.DRW(0, 1, 5, surface);
-
 
         instructions.execute_instructions(test_instructions, surface)
-        time.sleep(1./60)
-
+        time.sleep(1./25)
 
 
 memory.init()
