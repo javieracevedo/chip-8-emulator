@@ -40,7 +40,7 @@ The stack is used to store return addresses when subroutines are called. In the 
 
 ### Opcode table
 
-| Opcode        | Instruction                                              |
+| Opcode        | Description                                              |
 | ------------  | -------------------------------------------------------- |
 | 00E0          | Clear screen                                             |
 | 1NNN          | Jump                                                     |               
