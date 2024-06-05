@@ -19,7 +19,9 @@ The CHIP-8 has 16 registers (V0...VF). VF is typically used for addition and no 
 
 The CHIP-8 virtual machine has a built-in font. It has the characters 0 through F. Here are the character sprite specs:
 
-![alt text](font.jpeg "Chip-8 Font Specs")
+| ![space-1.jpg](font.jpeg) | 
+|:--:| 
+| *[Source](https://www.cs.columbia.edu/~sedwards/classes/2016/4840-spring/designs/Chip8.pdf)* |
 
 
 ### Display
