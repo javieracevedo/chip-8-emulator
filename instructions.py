@@ -44,6 +44,13 @@ def JUMP(nnn):
     pc.set(nnn)
     print(pc.pc)
 
+def SET_I(nnn):
+    registers.I = nnn
+
+
+def ADD_VX(Vx, nn):
+    result = str((int(registers.V[Vx], 16) + int(nn, 16)) % 256)
+    registers.V[Vx] = result
 
 
 def execute_instructions(instructions, surface):
@@ -55,6 +62,10 @@ def execute_instructions(instructions, surface):
             vx = instruction[1]
             kk = instruction[2:]
             LD_VX(vx, kk)
+        elif (instruction[0] == "7"):
+            vx = instruction[1]
+            nn = instruction[2:]
+            ADD_VX(int(vx), nn)
         elif (instruction[0] == "F"):
             vx = instruction[1]
             if (instruction[2:] == "29"):
@@ -69,4 +80,8 @@ def execute_instructions(instructions, surface):
         elif (instruction[0] == "1"):
             nnn = instruction[1:]
             JUMP(nnn)
+        elif (instruction[0] == "A"):
+            nnn = instruction[1:]
+            SET_I(int(nnn, 16))
+
 
