@@ -125,8 +125,13 @@ test_instructions = [
     "F229",
     "D455",
 
-    "100A"
+    "641B",
+    "651B",
+    "F229",
+    "A200",
+    "D455"
 ]
+
 
 def run():
     running = True
