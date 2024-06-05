@@ -25,6 +25,7 @@ def LDX_VK(Vx):
     key = events.wait_for_keypress();
     registers.V[Vx] = key
 
+
 def DRW(Vx, Vy, n, surface):
     mem_slice = memory.memory[registers.I:registers.I+n]
 
@@ -42,7 +43,6 @@ def DRW(Vx, Vy, n, surface):
 
 def JUMP(nnn):
     pc.set(nnn)
-    print(pc.pc)
 
 def SET_I(nnn):
     registers.I = nnn
@@ -67,16 +67,17 @@ def execute_instructions(instructions, surface):
             nn = instruction[2:]
             ADD_VX(int(vx), nn)
         elif (instruction[0] == "F"):
+            print("here")
             vx = instruction[1]
             if (instruction[2:] == "29"):
-                LDF_VX(int(vx))
+                LDF_VX(int(vx, 16))
             else:
-                LDX_VK(int(vx))
+                LDX_VK(int(vx, 16))
         elif (instruction[0] == "D"):
             vx = instruction[1]
             vy = instruction[2]
             n = instruction[3]
-            DRW(int(vx), int(vy), int(n), surface)
+            DRW(int(vx, 16), int(vy, 16), int(n, 16), surface)
         elif (instruction[0] == "1"):
             nnn = instruction[1:]
             JUMP(nnn)
