@@ -8,10 +8,16 @@ import registers
 import data
 import struct
 import numpy as np
+import debug
+import sys
+import os
+from pygame.locals import *
 
+
+
+# Test Data
 test_instructions = [
     #"00E0", # Clear the Screen
-   
     # Drawn A Sprite
     "6400", # Set X co-ordinate
     "6500", # Set Y co-ordinate
@@ -61,22 +67,19 @@ test_instructions = [
     "F229",
     "D455",
 
-
     # Draw 2 Sprite
     "642A",
     "6500",
     "6202",
     "F229",
     "D455",
-
-
+    
     # Draw 3 Sprite
     "6430",
     "6500",
     "6203",
     "F229",
     "D455",
-
 
     # Draw 4 Sprite
     "6436",
@@ -85,14 +88,12 @@ test_instructions = [
     "F229",
     "D455",
 
-
     # Draw 5 Sprite
     "6400",
     "6506",
     "6205",
     "F229",
     "D455",
-
     
     # Draw 6 Sprite
     "6406",
@@ -101,14 +102,12 @@ test_instructions = [
     "F229",
     "D455",
 
-
     # Draw 7 Sprite
     "640C",
     "6506",
     "6207",
     "F229",
     "D455",
-
 
     # Draw 8 Sprite
     "6412",
@@ -117,7 +116,6 @@ test_instructions = [
     "F229",
     "D455",
 
-
     # Draw 9 Sprite
     "6418",
     "6506",
@@ -125,11 +123,12 @@ test_instructions = [
     "F229",
     "D455",
 
+    # Draw a random sprite
     "641B",
     "651B",
     "F229",
     "A200",
-    "D455"
+    "D455",
 ]
 
 
@@ -138,19 +137,18 @@ ibm_instructions = []
 
 def run():
     running = True
-    
+ 
     pygame.init()
     pygame.display.set_caption("Chip-8")
     surface = pygame.display.set_mode((640, 320))
-
-    instructions.CLS(surface)
-
+    
     pygame.event.clear()
     while running:
         pygame.display.flip()
 
         instructions.execute_instructions(ibm_instructions, surface)
         time.sleep(1./25)
+        
 
 
 with open("roms/ibm.ch8", mode='rb') as file:
