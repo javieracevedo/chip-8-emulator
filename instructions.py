@@ -5,6 +5,14 @@ import events
 import pygame
 import utils
 import pc
+import debug
+import sys
+
+
+
+show_debug_info = False
+if (len(sys.argv) > 1 and sys.argv[1] == 'debug'): show_debug_info = True
+
 
 
 def CLS(surface):
@@ -83,5 +91,8 @@ def execute_instructions(instructions, surface):
         elif (instruction[0] == "A"):
             nnn = instruction[1:]
             SET_I(int(nnn, 16))
+        
 
+        if show_debug_info:
+            debug.show_resources()
 
