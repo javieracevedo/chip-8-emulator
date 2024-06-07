@@ -2,6 +2,7 @@
 
 This is my implementation of the CHIP-8 virtual machine from the 1970s, developed as a weekend project. Below is an overview of its features and specifications.
 
+![ibm rom demo](ibm.png)
 
 ## VM Description
 

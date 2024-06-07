@@ -1,4 +1,7 @@
 import data
+import numpy as np
+import struct
+
 
 MEM_SIZE_BYTES=4096
 memory = []
@@ -47,7 +50,6 @@ def read(addr_idx):
     if (addr_idx > len(memory)):
         print("Address is larger than memory size")
         return;
-    #print(memory[addr_idx])
     return memory[addr_idx]
 
 def get_font_addr(value):
@@ -70,4 +72,12 @@ def free(addr_idx):
     del alloc_table[addr_idx]
     write(addr_idx, 0x0, alloc=False)
 
+def load_rom(file_path):
+    with open(file_path, mode='rb') as file:
+        lines = file.readlines()
+        lines = np.array(lines).flatten()[0]
+    
+        for idx in range(0, len(lines)):
+            byte = struct.unpack(">s", lines[idx:idx+1])[0].hex()
+            write(idx + 0x200, byte) 
 

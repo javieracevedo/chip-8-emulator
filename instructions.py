@@ -14,7 +14,6 @@ show_debug_info = False
 if (len(sys.argv) > 1 and sys.argv[1] == 'debug'): show_debug_info = True
 
 
-
 def CLS(surface):
     surface.fill(0)
     pygame.display.flip()
@@ -27,12 +26,11 @@ def LDF_VX(Vx):
     Vx_value = registers.V[Vx]
     Vx_addr = memory.get_font_addr(Vx_value)
     if (Vx_addr != None):
-        registers.I = Vx_addr
+        registers.I = int(Vx_addr, 16)
 
 def LDX_VK(Vx):
     key = events.wait_for_keypress();
     registers.V[Vx] = key
-
 
 def DRW(Vx, Vy, n, surface):
     mem_slice = memory.memory[registers.I:registers.I+n]
@@ -55,45 +53,47 @@ def JUMP(nnn):
 def SET_I(nnn):
     registers.I = nnn
 
-
 def ADD_VX(Vx, nn):
-    result = str((int(registers.V[Vx], 16) + int(nn, 16)) % 256)
-    registers.V[Vx] = result
+    result = (int(registers.V[Vx], 16) + int(nn, 16)) % 256
+    registers.V[Vx] = hex(result)
+
+def execute_instruction(instruction, surface):
+    if show_debug_info:
+        debug.show_resources()
 
 
-def execute_instructions(instructions, surface):
-    for c in range(len(instructions)):
-        instruction = instructions[c]
-        if (instruction == "00E0"):
-            CLS(surface)
-        elif (instruction[0] == "6"):
-            vx = instruction[1]
-            kk = instruction[2:]
-            LD_VX(vx, kk)
-        elif (instruction[0] == "7"):
-            vx = instruction[1]
-            nn = instruction[2:]
-            ADD_VX(int(vx), nn)
-        elif (instruction[0] == "F"):
-            print("here")
-            vx = instruction[1]
-            if (instruction[2:] == "29"):
-                LDF_VX(int(vx, 16))
-            else:
-                LDX_VK(int(vx, 16))
-        elif (instruction[0] == "D"):
-            vx = instruction[1]
-            vy = instruction[2]
-            n = instruction[3]
-            DRW(int(vx, 16), int(vy, 16), int(n, 16), surface)
-        elif (instruction[0] == "1"):
-            nnn = instruction[1:]
-            JUMP(nnn)
-        elif (instruction[0] == "A"):
-            nnn = instruction[1:]
-            SET_I(int(nnn, 16))
-        
+    if (instruction == "00E0"):
+        CLS(surface)
+    elif (instruction[0] == "6"):
+        vx = instruction[1]
+        kk = instruction[2:]
+        LD_VX(vx, kk)
+    elif (instruction[0] == "7"):
+        vx = instruction[1]
+        nn = instruction[2:]
+        ADD_VX(int(vx), nn)
+    elif (instruction[0] == "F"):
+        vx = instruction[1]
+        if (instruction[2:] == "29"):
+            LDF_VX(int(vx, 16))
+        else:
+            LDX_VK(int(vx, 16))
+    elif (instruction[0] == "D"):
+        vx = instruction[1]
+        vy = instruction[2]
+        n = instruction[3]
+        DRW(int(vx, 16), int(vy, 16), int(n, 16), surface)
+    elif (instruction[0] == "1"):
+        nnn = instruction[1:]
+        JUMP(nnn)
+    elif (instruction[0] == "A"):
+        nnn = instruction[1:]
+        SET_I(int(nnn, 16))
 
-        if show_debug_info:
-            debug.show_resources()
+def fetch():
+    pc.increment() 
+    return memory.memory[pc.pc:pc.pc+2]
+
+def decode(memory_slice):
+    return ''.join(memory_slice)
 
