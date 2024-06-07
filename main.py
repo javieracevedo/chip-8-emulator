@@ -132,7 +132,7 @@ test_instructions = [
 ]
 
 
-ibm_instructions = []
+
 
 
 def run():
@@ -146,26 +146,16 @@ def run():
     while running:
         pygame.display.flip()
 
-        instructions.execute_instructions(ibm_instructions, surface)
+        #instructions.execute_instructions(ibm_instructions, surface)
         time.sleep(1./25)
         
 
 
-with open("roms/ibm.ch8", mode='rb') as file:
-    lines = file.readlines()
-    lines = np.array(lines).flatten()[0]
-    
-    for idx in range(0, len(lines), 2):
-        first = struct.unpack(">ss", lines[idx:idx+2])[0].hex()
-        second = struct.unpack(">ss", lines[idx:idx+2])[1].hex()
-        merged = str(first) + str(second)
-        ibm_instructions.append(merged.upper())
-
 
 memory.init()
 
-data.load_sprites(memory)
 data.load_font(memory)
+memory.load_rom("roms/ibm.ch8")
 
 run()
 
