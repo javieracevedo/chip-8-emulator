@@ -1,7 +1,8 @@
 import os
 import registers
 import events
-
+import pc
+import memory
 
 def print_heading(title):
     print(title)
@@ -9,6 +10,12 @@ def print_heading(title):
     print()
     print()
 
+def get_instruction(pc_address):
+    instruction = ''
+    if (type(memory.memory[pc_address]) == str):
+        instruction = ''.join(memory.memory[pc_address:pc_address+2])
+    
+    return instruction 
 
 def show_resources():
     os.system('clear')
@@ -23,5 +30,7 @@ def show_resources():
 
     print_heading("Stack")
     print_heading("Program Counter")
+    print("Address: " + hex(pc.pc))
+    print("Instruction: " + get_instruction(pc.pc).upper())
     events.wait_for_keypress()
-    
+
