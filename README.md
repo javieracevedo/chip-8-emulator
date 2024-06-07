@@ -1,23 +1,23 @@
 # Chip-8 Virtual Machine
 
-This is my implementation of the CHIP-8 virtual machine from the 1970s. I started working on this for fun on the weekend, not thinking I would decide to follow through, so it is a quick and dirty implementation, at least for now.
+This is my implementation of the CHIP-8 virtual machine from the 1970s, developed as a weekend project. Below is an overview of its features and specifications.
 
 
 ## VM Description
 
 ### Memory
 
-The CHIP-8 VM has 4096 addresses. Each contains 8 bits, for a total of 4KB of space. The first 512 bytes were reserved for the interpreter, this is no longer necessary since the interpreter can run natively in the host. Modern implementations (like this one) store font data in that space. The last 256 bytes are reserved for display refresh and the previous 96 bytes before that are reserved for the call stack, internal use, and other variables.
+The CHIP-8 VM has 4096 memory addresses, each containing 8 bits, totaling 4KB of space. The first 512 bytes were traditionally reserved for the interpreter, but in modern implementations, this space is used for font data. The last 256 bytes are reserved for display refresh, and the preceding 96 bytes are allocated for the call stack, internal use, and other variables.
 
 
 ### Registers
 
-The CHIP-8 has 16 registers (V0...VF). VF is typically used for addition and no borrow flags. Additionally, an address register (I) stores a 12-bit wide address (4096 addresses in total). 
+The CHIP-8 has 16 registers (V0...VF). VF is typically used as a flag for carry operations. Additionally, an address register (I) stores a 12-bit wide address.
 
 
 ### Font
 
-The CHIP-8 virtual machine has a built-in font. It has the characters 0 through F. Here are the character sprite specs:
+The CHIP-8 virtual machine includes a built-in font with characters 0 through F. Here are the character sprite specifications:
 
 | ![space-1.jpg](font.jpeg) | 
 |:--:| 
@@ -26,12 +26,12 @@ The CHIP-8 virtual machine has a built-in font. It has the characters 0 through 
 
 ### Display
 
-The display is 64x32 pixels tall (however in this implementation it's scaled). To handle graphics I'm using the SDL wrapper for python: pygame.
+The display is 64x32 pixels tall, although in this implementation, it is scaled. Graphics are handled using the SDL wrapper for Python: Pygame.
 
 
 ### Stack
 
-The stack is used to store return addresses when subroutines are called. In the old days the stack allowed 12 levels of nesting, in modern implementations this limitation doesn't exist.
+The stack is used to store return addresses when subroutines are called. Modern implementations do not have the 12-level nesting limitation of older versions.
 
 
 ### Timers
@@ -42,38 +42,42 @@ The stack is used to store return addresses when subroutines are called. In the 
 
 ### Opcode table
 
-| Opcode        | Description                                              |
-| :---          | :---                                                     |
-| 00E0          | Clear screen                                             |
-| 1NNN          | Jump                                                     |               
-| 6XNN          | Set VX to NN                                             |
-| 7XNN          | Add NN to VX                                             |
-| ANNN          | Set I to NNN                                             |
-| DXYN          | Display the value in memory location I at VX VY position |
-| 0NNN          | Pause execution and execute the instruction in NNN       |
-| 2NNN          | Push PC to the stack and call subroutine at NNN          |
-| 00EE          | Return from subroutine (pop last address from stack)     | 
-| 3XNN          | Conditional skip                                         |
-| 4XNN          | Conditional skip                                         |
-| 5XY0          | Conditional skip                                         |
-| 9XY0          | Conditional skip                                         |
-| 6XNN          | Set VX to NN                                             |
-| 7XNN          | Add NN to VX                                             |
-| 8XY0          | Set VX to the value of VY                                |
-| 8XY1          | Set VX to the result of VX || VY                         |
-| 8XY2          | Set VX to the result of VX && VY                         |
-| 8XY3          | Set VX to the result of VX ^  VY                         |       
-| 8XY4          | Set VX to the result of VX + VY (Add)                    | 
-| 8XY5/8XY7     | Set VX to the result of VX - VY (Subtract)               |
-| 8XY6/8XYE     | Shift the value of VX one bit to the right or left       |
-| BXNN          | Jump to address XNN plus the value in VX                 |
-| CXNN          | Generates a random number and binary ANDs it with NN     |
-| EX9E/EXA1     | Skip the next instruction if a key is being pressed      |
-| FX07/FX15/FX18| Timers                                                   |
-| FX55/FF66     | Store/Load registers to/from memory                      |
-| FX33          | Converts the value in VX to three decimal digits and stores them in the address in I |
-| FX1E          | Add the value of VX to I                                 |
-| FX0A          | Wait for keypress                                        |
-| FX29          | Set I to the address of the hex value in VX              |
+| Opcode | Description |
+| :--- | :--- |
+| 00E0 | Clear the screen |
+| 1NNN | Jump to address NNN |
+| 6XNN | Set VX to NN |
+| 7XNN | Add NN to VX |
+| ANNN | Set I to NNN |
+| DXYN | Display the value in memory location I at VX, VY position |
+| 0NNN | Pause execution and execute the instruction at NNN |
+| 2NNN | Push current PC to stack and call subroutine at NNN |
+| 00EE | Return from subroutine (pop last address from stack) |
+| 3XNN | Conditional skip if VX equals NN |
+| 4XNN | Conditional skip if VX does not equal NN |
+| 5XY0 | Conditional skip if VX equals VY |
+| 9XY0 | Conditional skip if VX does not equal VY |
+| 8XY0 | Set VX to the value of VY |
+| 8XY1 | Set VX to VX OR VY |
+| 8XY2 | Set VX to VX AND VY |
+| 8XY3 | Set VX to VX XOR VY |
+| 8XY4 | Add VY to VX; VF is set to 1 on carry, 0 otherwise |
+| 8XY5 | Subtract VY from VX; VF is set to 0 on borrow, 1 otherwise |
+| 8XY6 | Shift VX right by 1; VF is set to the least significant bit of VX before the shift |
+| 8XY7 | Set VX to VY - VX; VF is set to 0 on borrow, 1 otherwise |
+| 8XYE | Shift VX left by 1; VF is set to the most significant bit of VX before the shift |
+| BXNN | Jump to address NNN plus V0 |
+| CXNN | Set VX to a random number AND NN |
+| EX9E | Skip next instruction if key stored in VX is pressed |
+| EXA1 | Skip next instruction if key stored in VX is not pressed |
+| FX07 | Set VX to value of delay timer |
+| FX15 | Set delay timer to VX |
+| FX18 | Set sound timer to VX |
+| FX55 | Store V0 to VX in memory starting at address I |
+| FX65 | Load V0 to VX from memory starting at address I |
+| FX33 | Store binary-coded decimal representation of VX at address I, I+1, and I+2 |
+| FX1E | Add VX to I; VF is set to 1 on overflow, 0 otherwise |
+| FX0A | Wait for keypress, store key in VX |
+| FX29 | Set I to the address of the sprite for the character in VX |
 
 
