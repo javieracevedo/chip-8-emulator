@@ -22,7 +22,7 @@ def scaled_draw(x, y, new_pixel_state, surface):
     current_pixel_state = -1
     for pos_x in range(x, x+10):
         for pos_y in range(y, y+10):
-            if (surface.get_at((pos_x, pos_y)) == ON):
+            if (surface.get_at((pos_x % 640, pos_y % 320)) == ON):
                 current_pixel_state = True
             else:
                 current_pixel_state = False

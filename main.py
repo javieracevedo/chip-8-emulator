@@ -6,10 +6,11 @@ import pygame
 import time
 import registers
 import data
+import struct
+import numpy as np
 import debug
 import sys
 import os
-
 from pygame.locals import *
 
 
@@ -131,6 +132,9 @@ test_instructions = [
 ]
 
 
+ibm_instructions = []
+
+
 def run():
     running = True
  
@@ -140,9 +144,22 @@ def run():
     
     pygame.event.clear()
     while running:
+        pygame.display.flip()
+
+        instructions.execute_instructions(ibm_instructions, surface)
+        time.sleep(1./25)
         
-        instructions.execute_instructions(test_instructions, surface)
-        time.sleep(1/50)
+
+
+with open("roms/ibm.ch8", mode='rb') as file:
+    lines = file.readlines()
+    lines = np.array(lines).flatten()[0]
+    
+    for idx in range(0, len(lines), 2):
+        first = struct.unpack(">ss", lines[idx:idx+2])[0].hex()
+        second = struct.unpack(">ss", lines[idx:idx+2])[1].hex()
+        merged = str(first) + str(second)
+        ibm_instructions.append(merged.upper())
 
 
 memory.init()
