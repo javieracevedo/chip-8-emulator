@@ -162,8 +162,6 @@ with open("roms/ibm.ch8", mode='rb') as file:
         ibm_instructions.append(merged.upper())
 
 
-print(ibm_instructions)
-
 memory.init()
 
 data.load_sprites(memory)
