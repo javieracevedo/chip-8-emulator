@@ -7,142 +7,14 @@ import time
 import registers
 import data
 import struct
-import numpy as np
-import debug
 import sys
 import os
 import pc
-
+import debug
 from pygame.locals import *
+import numpy as np
 
 
-
-# Test Data
-test_instructions = [
-    #"00E0", # Clear the Screen
-    # Drawn A Sprite
-    "6400", # Set X co-ordinate
-    "6500", # Set Y co-ordinate
-    "620A", # Put the number A in V2
-    "F229", # Point to the A font
-    "D455", # Draw Sprite
-
-    # Draw B Sprite
-    "6406",
-    "6500",
-    "620B",
-    "F229",
-    "D455",
-
-    # Draw C Sprite
-    "640C",
-    "6500",
-    "620C",
-    "F229",
-    "D455",
-
-    # Draw D Sprite
-    "6412",
-    "6500",
-    "620D",
-    "F229",
-    "D455",
-
-    # Draw E Sprite
-    "6418",
-    "6500",
-    "620E",
-    "F229",
-    "D455",
-
-    # Draw F Sprite
-    "641E",
-    "6500",
-    "620F",
-    "F229",
-    "D455",
-
-    # Draw 1 Sprite
-    "6424",
-    "6500",
-    "6201",
-    "F229",
-    "D455",
-
-    # Draw 2 Sprite
-    "642A",
-    "6500",
-    "6202",
-    "F229",
-    "D455",
-    
-    # Draw 3 Sprite
-    "6430",
-    "6500",
-    "6203",
-    "F229",
-    "D455",
-
-    # Draw 4 Sprite
-    "6436",
-    "6500",
-    "6204",
-    "F229",
-    "D455",
-
-    # Draw 5 Sprite
-    "6400",
-    "6506",
-    "6205",
-    "F229",
-    "D455",
-    
-    # Draw 6 Sprite
-    "6406",
-    "6506",
-    "6206",
-    "F229",
-    "D455",
-
-    # Draw 7 Sprite
-    "640C",
-    "6506",
-    "6207",
-    "F229",
-    "D455",
-
-    # Draw 8 Sprite
-    "6412",
-    "6506",
-    "6208",
-    "F229",
-    "D455",
-
-    # Draw 9 Sprite
-    "6418",
-    "6506",
-    "6209",
-    "F229",
-    "D455",
-
-    # Draw a random sprite
-    "641B",
-    "651B",
-    "F229",
-    "A200",
-    "D455",
-]
-
-
-
-def fetch():
-    pc_address = pc.pc
-    instruction = ''
-    if (type(memory.memory[pc_address]) == str):
-        instruction = ''.join(memory.memory[pc_address:pc_address+2])
-    
-    pc.increment()
-    return instruction 
 
 def run():
     running = True
@@ -155,22 +27,16 @@ def run():
     pygame.event.clear()
     while running:
         pygame.display.flip()
-        instruction = fetch()
-        instructions.execute_instruction(instruction.upper(), surface)
- 
+        instruction = instructions.fetch()
+        instruction = instructions.decode(instruction)
+        instructions.execute_instruction(instruction.upper(), surface) 
         clock.tick(60)
-
 
 
 memory.init()
 
 data.load_font(memory)
 memory.load_rom("roms/ibm.ch8")
-
-#memory.memory[0x22a] = '12'
-#memory.memory[0x22c] = '00'
-
-
 
 run()
 
