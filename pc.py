@@ -1,7 +1,7 @@
 import memory
 
 # 12 bit
-pc = None
+pc = 0x200
 
 
 def set(nibble):
@@ -10,7 +10,11 @@ def set(nibble):
         return
 
     global pc 
-    pc = hex(int(nibble, 16))
+    pc = int(nibble, 16)
 
 
+def increment():
+    global pc
+    if pc <= 4096:
+        pc += 0x2
 

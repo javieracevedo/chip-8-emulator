@@ -11,6 +11,8 @@ import numpy as np
 import debug
 import sys
 import os
+import pc
+
 from pygame.locals import *
 
 
@@ -133,7 +135,14 @@ test_instructions = [
 
 
 
-
+def fetch():
+    pc_address = pc.pc
+    instruction = ''
+    if (type(memory.memory[pc_address]) == str):
+        instruction = ''.join(memory.memory[pc_address:pc_address+2])
+    
+    pc.increment()
+    return instruction 
 
 def run():
     running = True
@@ -141,14 +150,15 @@ def run():
     pygame.init()
     pygame.display.set_caption("Chip-8")
     surface = pygame.display.set_mode((640, 320))
+    clock = pygame.time.Clock()
     
     pygame.event.clear()
     while running:
         pygame.display.flip()
-
-        #instructions.execute_instructions(ibm_instructions, surface)
-        time.sleep(1./25)
-        
+        instruction = fetch()
+        instructions.execute_instruction(instruction.upper(), surface)
+ 
+        clock.tick(60)
 
 
 
@@ -156,6 +166,11 @@ memory.init()
 
 data.load_font(memory)
 memory.load_rom("roms/ibm.ch8")
+
+#memory.memory[0x22a] = '12'
+#memory.memory[0x22c] = '00'
+
+
 
 run()
 
