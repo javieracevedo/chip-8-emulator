@@ -13,6 +13,7 @@ import pc
 import debug
 from pygame.locals import *
 import numpy as np
+import stack
 
 
 
@@ -27,16 +28,15 @@ def run():
     pygame.event.clear()
     while running:
         pygame.display.flip()
-        instruction = instructions.fetch()
-        instruction = instructions.decode(instruction)
-        instructions.execute_instruction(instruction.upper(), surface) 
+        instructions.cycle(surface)
         clock.tick(60)
 
 
 memory.init()
 
 data.load_font(memory)
-memory.load_rom("roms/ibm.ch8")
+memory.load_rom("roms/bc_test.ch8")
+#stack.stack.append(0x03)
 
 run()
 
