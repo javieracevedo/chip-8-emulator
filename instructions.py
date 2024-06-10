@@ -114,7 +114,21 @@ def SUB_7(Vx, Vy):
         registers.V[0xF] = '0x00'
         registers.V[Vx] = hex((Vy_value - Vx_value) % 256)
     print("Stuff: ", registers.V)
+
+def OR(Vx, Vy):
+    Vx_value = int(registers.V[Vx], 16)
+    Vy_value = int(registers.V[Vy], 16)
+
+    registers.V[Vx] = hex(Vx_value | Vy_value)
  
+def AND(Vx, Vy):
+    Vx_value = int(registers.V[Vx], 16)
+    Vy_value = int(registers.V[Vy], 16)
+
+    print("VX: ", Vx_value)
+    print("VY: ", Vy_value)
+
+    registers.V[Vx] = hex(Vx_value & Vy_value)
 
 def execute_instruction(instruction, surface):
     if show_debug_info:
@@ -124,7 +138,7 @@ def execute_instruction(instruction, surface):
     if (instruction == "00E0"):
         CLS(surface)
     elif (instruction == "00EE"):
-        RET();
+        RET()
     elif (instruction[0] == "6"):
         vx = instruction[1]
         kk = instruction[2:]
@@ -174,7 +188,15 @@ def execute_instruction(instruction, surface):
     elif (instruction[0] == "8" and instruction[3] == "7"):
         Vx = instruction[1]
         Vy = instruction[2]
-        SUB_7(int(Vx), int(Vy))
+        SUB_7(int(Vx, 16), int(Vy, 16))
+    elif (instruction[0] == "8" and instruction[3] == "1"):
+        Vx = instruction[1]
+        Vy = instruction[2]
+        OR(int(Vx, 16), int(Vy, 16))
+    elif (instruction[0] == "8" and instruction[3] == "2"):
+        Vx = instruction[1]
+        Vy = instruction[2]
+        AND(int(Vx, 16), int(Vy, 16))
 
 
 def fetch():
