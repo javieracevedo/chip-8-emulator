@@ -1,6 +1,7 @@
 import data
 import numpy as np
 import struct
+import utils
 
 
 MEM_SIZE_BYTES=4096
@@ -16,40 +17,38 @@ def is_hex(s):
         return False
 
 def init():
-    for i in range(MEM_SIZE_BYTES):
-        memory.append(hex(int("0x0", 16)))
+    for _ in range(MEM_SIZE_BYTES):
+        memory.append(0)
 
-def write(addr_idx, hex_data, alloc=True):
+def write(addr_idx, value, alloc=True):
     if (len(memory) == 0):
         print("Memory has not been initialized...")
-        return;
+        return
 
     if (not is_free(addr_idx)):
         print("This memory address is not free for use (addr: ", addr_idx, ")")
-        return;
+        return
 
-    # Check if hex_data is actually hex
-    if (not is_hex(str(hex_data))):
-        print("Hex data argument is not hex")
-        return;
-   
-    # Check if hex only has two digits
-    if (int(int(hex_data, 16) > 0xFF)):
-        print("Hex data cannot be more than 2 digits")
-        return;
+    if (not isinstance(value, int)):
+        print("Value should be a number")
+        return
+
+    if (value > 255):
+        print("Value cannot be larger than 1 byte.")
+        return
 
     if (addr_idx > MEM_SIZE_BYTES):
         print("Addr_idx larger than memory")
-        return;
+        return
 
-    memory[addr_idx] = hex_data
+    memory[addr_idx] = value
     if (alloc):
         alloc_table.append(addr_idx)
     
 def read(addr_idx):
     if (addr_idx > len(memory)):
         print("Address is larger than memory size")
-        return;
+        return
     return memory[addr_idx]
 
 def get_font_addr(value):
@@ -78,6 +77,7 @@ def load_rom(file_path):
         lines = np.array(lines).flatten()[0]
     
         for idx in range(0, len(lines)):
-            byte = struct.unpack(">s", lines[idx:idx+1])[0].hex()
-            write(idx + 0x200, byte) 
+            byte = struct.unpack("B", lines[idx:idx+1])[0]
+            print(type(byte))
+            write(idx + 0x200, byte)
 
