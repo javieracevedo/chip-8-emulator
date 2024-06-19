@@ -29,15 +29,15 @@ def LDF_VX(Vx):
         registers.I = int(Vx_addr, 16)
 
 def LDX_VK(Vx):
-    key = events.wait_for_keypress();
+    key = events.wait_for_keypress()
     registers.V[Vx] = key
 
 def DRW(Vx, Vy, n, surface):
     mem_slice = memory.memory[registers.I:registers.I+n]
 
     pos_y = int(registers.V[Vy], 16)
-    for hex_str in mem_slice:
-        binary = utils.hex_to_bin(hex_str)
+    for integer in mem_slice:
+        binary = utils.int_to_bin_str(integer)
         for idx in range(0, 8):
             pixel_state = display.ON
             if (binary[idx] == '0'):
@@ -91,9 +91,12 @@ def execute_instruction(instruction, surface):
         SET_I(int(nnn, 16))
 
 def fetch():
-    pc.increment() 
+    pc.increment()
     return memory.memory[pc.pc:pc.pc+2]
 
 def decode(memory_slice):
-    return ''.join(memory_slice)
+    first_byte = utils.int_to_hex_str(memory_slice[0])
+    second_byte = utils.int_to_hex_str(memory_slice[1])
+
+    return first_byte + second_byte
 
