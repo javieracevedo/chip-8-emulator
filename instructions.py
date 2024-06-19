@@ -95,7 +95,6 @@ def fetch():
     return memory.memory[pc.pc:pc.pc+2]
 
 def decode(memory_slice):
-    print(memory_slice)
     first_byte = utils.int_to_hex_str(memory_slice[0])
     second_byte = utils.int_to_hex_str(memory_slice[1])
 

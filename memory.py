@@ -78,6 +78,5 @@ def load_rom(file_path):
     
         for idx in range(0, len(lines)):
             byte = struct.unpack("B", lines[idx:idx+1])[0]
-            print(type(byte))
             write(idx + 0x200, byte)
 
