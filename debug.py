@@ -3,6 +3,7 @@ import registers
 import events
 import pc
 import memory
+import stack
 
 def print_heading(title):
     print(title)
@@ -29,8 +30,14 @@ def show_resources():
     print()
 
     print_heading("Stack")
+    for idx in range(0, len(stack.stack)):
+        print(str(idx) + ": " + hex(stack.stack[idx]))
+    print()
+    print()
+
     print_heading("Program Counter")
     print("Address: " + hex(pc.pc))
     print("Instruction: " + get_instruction(pc.pc).upper())
     events.wait_for_keypress()
+
 

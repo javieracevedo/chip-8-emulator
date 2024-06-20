@@ -2,12 +2,12 @@ import display
 import registers
 import memory
 import events
-import pygame
 import utils
 import pc
 import debug
+import stack
 import sys
-
+import pygame
 
 
 show_debug_info = False
@@ -19,14 +19,17 @@ def CLS(surface):
     pygame.display.flip()
 
 def LD_VX(Vx, kk):
-    Vx = int(Vx)
-    registers.V[Vx] = hex(int(kk, 16))
+    Vx = int(Vx, 16)
+    registers.V[Vx] = int(kk, 16)
 
 def LDF_VX(Vx):
     Vx_value = registers.V[Vx]
     Vx_addr = memory.get_font_addr(Vx_value)
     if (Vx_addr != None):
-        registers.I = int(Vx_addr, 16)
+        if (type(Vx_addr) == str):
+            registers.I = int(Vx_addr, 16)
+        else:
+            registers.I = Vx_addr
 
 def LDX_VK(Vx):
     key = events.wait_for_keypress()
@@ -35,14 +38,14 @@ def LDX_VK(Vx):
 def DRW(Vx, Vy, n, surface):
     mem_slice = memory.memory[registers.I:registers.I+n]
 
-    pos_y = int(registers.V[Vy], 16)
+    pos_y = registers.V[Vy]
     for integer in mem_slice:
         binary = utils.int_to_bin_str(integer)
         for idx in range(0, 8):
             pixel_state = display.ON
             if (binary[idx] == '0'):
                 pixel_state = display.OFF
-            display.scaled_draw(int(registers.V[Vx], 16) + idx, pos_y, pixel_state, surface);
+            display.scaled_draw(registers.V[Vx] + idx, pos_y, pixel_state, surface)
             
         pos_y += 1
     pygame.display.flip()
@@ -51,19 +54,86 @@ def JUMP(nnn):
     pc.set(nnn)
 
 def SET_I(nnn):
-    registers.I = nnn
+    registers.I = int(nnn, 16)
 
 def ADD_VX(Vx, nn):
-    result = (int(registers.V[Vx], 16) + int(nn, 16)) % 256
-    registers.V[Vx] = hex(result)
+    result = (registers.V[Vx] + int(nn, 16)) % 256
+    registers.V[Vx] = result
+
+def RET():
+    if (len(stack.stack)):
+        addr = stack.stack.pop()
+        registers.PC = addr
+
+def CALL(nnn):
+    stack.stack.append(pc.pc)
+    pc.set(nnn)
+
+def SKIP_3(Vx, nn):
+    if (registers.V[Vx] == int(nn, 16)):
+        pc.increment()
+
+def SKIP_4(Vx, nn):
+    if (registers.V[Vx] != int(nn, 16)):
+        pc.increment()
+
+def SKIP_5(Vx, Vy):
+    if (registers.V[Vx] == registers.V[Vy]):
+        pc.increment()
+
+def SUB_5(Vx, Vy):
+    Vx_value = registers.V[Vx]
+    Vy_value = registers.V[Vy]
+
+    if (Vx_value > Vy_value):
+        registers.V[0xF] = 1
+        registers.V[Vx] = Vx_value - Vy_value
+    else:
+        registers.V[0xF] = 0
+        registers.V[Vx] = (Vx_value - Vy_value) % 256
+ 
+
+def SUB_7(Vx, Vy):
+    Vx_value = registers.V[Vx]
+    Vy_value = registers.V[Vy]
+
+    if (Vy_value > Vx_value):
+        registers.V[0xF] = 1
+        registers.V[Vx] = Vy_value - Vx_value
+    else:
+        registers.V[0xF] = 0
+        registers.V[Vx] = (Vy_value - Vx_value) % 256
+
+def OR(Vx, Vy):
+    Vx_value = registers.V[Vx]
+    Vy_value = registers.V[Vy]
+
+    registers.V[Vx] = Vx_value | Vy_value
+ 
+def AND(Vx, Vy):
+    Vx_value = registers.V[Vx]
+    Vy_value = registers.V[Vy]
+
+    registers.V[Vx] = Vx_value & Vy_value
+
+def XOR(Vx, Vy):
+    Vx_value = registers.V[Vx]
+    Vy_value = registers.V[Vy]
+
+    registers.V[Vx] = Vx_value ^ Vy_value
+
+def SHIFT(Vx):
+    Vx_value = registers.V[Vx]
+    registers.V[Vx] = Vx_value << 1
 
 def execute_instruction(instruction, surface):
     if show_debug_info:
         debug.show_resources()
 
-
     if (instruction == "00E0"):
         CLS(surface)
+    elif (instruction == "00EE"):
+        RET()
     elif (instruction[0] == "6"):
         vx = instruction[1]
         kk = instruction[2:]
@@ -88,7 +158,49 @@ def execute_instruction(instruction, surface):
         JUMP(nnn)
     elif (instruction[0] == "A"):
         nnn = instruction[1:]
-        SET_I(int(nnn, 16))
+        SET_I(nnn)
+    elif (instruction[0] == "2"):
+        nnn = instruction[1:]
+        CALL(nnn)
+    elif (instruction[0] == "3"):
+        Vx = instruction[1]
+        nn = instruction[2:]
+        SKIP_3(int(Vx, 16), nn)
+    elif (instruction[0] == "5"):
+        Vx = instruction[1]
+        Vy = instruction[2]
+
+        SKIP_5(int(Vx, 16), int(Vy))
+    elif (instruction[0] == "4"):
+        Vx = instruction[1]
+        nn = instruction[2:]
+        SKIP_4(int(Vx), nn)
+
+    elif (instruction[0] == "8" and instruction[3] == "5"):
+        Vx = instruction[1]
+        Vy = instruction[2]
+        SUB_5(int(Vx), int(Vy))
+    elif (instruction[0] == "8" and instruction[3] == "7"):
+        Vx = instruction[1]
+        Vy = instruction[2]
+        SUB_7(int(Vx, 16), int(Vy, 16))
+    elif (instruction[0] == "8" and instruction[3] == "1"):
+        Vx = instruction[1]
+        Vy = instruction[2]
+        OR(int(Vx, 16), int(Vy, 16))
+    elif (instruction[0] == "8" and instruction[3] == "2"):
+        Vx = instruction[1]
+        Vy = instruction[2]
+        AND(int(Vx, 16), int(Vy, 16))
+    elif (instruction[0] == "8" and instruction[3] == "3"):
+        Vx = instruction[1]
+        Vy = instruction[2]
+        XOR(int(Vx, 16), int(Vy, 16))
+    elif (instruction[0] == "8" and instruction[3] == "E"):
+        Vx = instruction[1]
+        print("HERE")
+        SHIFT(int(Vx, 16))
+        
 
 def fetch():
     pc.increment()
@@ -100,3 +212,8 @@ def decode(memory_slice):
 
     return first_byte + second_byte
 
+
+def cycle(surface):
+    instruction = fetch()
+    instruction = decode(instruction)
+    execute_instruction(instruction.upper(), surface)

@@ -28,9 +28,9 @@ def wait_for_keypress():
     while True:
         event = pygame.event.wait()
 
-        if (event.type == QUIT):
+        if (event.type == pygame.QUIT):
             pygame.quit()
-        elif (event.type == KEYDOWN):
+        elif (event.type == pygame.KEYDOWN):
             if str(event.key) in key_codes:
                 return key_codes[str(event.key)]
 

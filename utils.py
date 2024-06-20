@@ -3,4 +3,4 @@ def int_to_bin_str(int_val):
     return bin_str
 
 def int_to_hex_str(number):
-    return hex(number)[2:].upper()
+    return hex(number)[2:].zfill(2)

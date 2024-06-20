@@ -53,7 +53,7 @@ def read(addr_idx):
 
 def get_font_addr(value):
     for idx in range(0x50, 0x9F + 1, 5):
-        if (data.font[value] == memory[idx:idx+5]):
+        if (data.font[hex(value)] == memory[idx:idx+5]):
             return idx
     return None
 
