@@ -55,5 +55,5 @@ def load_font(memory):
 
 def load_sprites(memory):
     for idx in range(0, len(sprites)):
-        memory.write(0x200 + idx, int(sprites[idx]))
+        memory.write(0x0 + idx, int(sprites[idx]))
     

@@ -40,3 +40,7 @@ memory.load_rom("roms/bc_test.ch8")
 
 run()
 
+
+
+# 16k
+# 

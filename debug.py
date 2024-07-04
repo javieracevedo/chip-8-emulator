@@ -4,6 +4,7 @@ import events
 import pc
 import memory
 import stack
+import instructions
 
 def print_heading(title):
     print(title)
@@ -12,11 +13,8 @@ def print_heading(title):
     print()
 
 def get_instruction(pc_address):
-    instruction = ''
-    if (type(memory.memory[pc_address]) == str):
-        instruction = ''.join(memory.memory[pc_address:pc_address+2])
-    
-    return instruction 
+    return ''.join(instructions.decode(memory.memory[pc_address:pc_address+2]))
+
 
 def show_resources():
     os.system('clear')
@@ -37,7 +35,16 @@ def show_resources():
 
     print_heading("Program Counter")
     print("Address: " + hex(pc.pc))
-    print("Instruction: " + get_instruction(pc.pc).upper())
+
+    print("Instruction (-2): " + get_instruction(pc.pc - 4).upper())
+    print("Instruction (-1): " + get_instruction(pc.pc - 2).upper())
+    print("Instruction (c): " + get_instruction(pc.pc).upper())
+    print()
+    print()
+
+    print_heading("Font")
+    print(memory.memory[0x50:0x9F+1])
+
     events.wait_for_keypress()
 
 

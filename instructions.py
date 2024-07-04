@@ -60,6 +60,9 @@ def ADD_VX(Vx, nn):
     result = (registers.V[Vx] + int(nn, 16)) % 256
     registers.V[Vx] = result
 
+def ADD_I(Vx):
+    registers.I = registers.V[Vx] + registers.I
+
 def RET():
     if (len(stack.stack)):
         addr = stack.stack.pop()
@@ -74,6 +77,7 @@ def SKIP_3(Vx, nn):
         pc.increment()
 
 def SKIP_4(Vx, nn):
+
     if (registers.V[Vx] != int(nn, 16)):
         pc.increment()
 
@@ -122,10 +126,51 @@ def XOR(Vx, Vy):
 
     registers.V[Vx] = Vx_value ^ Vy_value
 
-def SHIFT(Vx):
+def SHIFT_LEFT(Vx):
     Vx_value = registers.V[Vx]
+    msb = bin(Vx_value)[2]
+    if (Vx_value <= 127):
+       registers.V[0xF] = 0 
+    else:
+        registers.V[0xF] = int(msb)
     registers.V[Vx] = Vx_value << 1
 
+def SHIFT_RIGHT(Vx):
+    Vx_value = registers.V[Vx]
+    msb = int(bin(Vx_value)[-1])
+    registers.V[15] = msb
+    registers.V[Vx] = Vx_value >> 1
+
+def STORE(x):
+    for Vx in range(0, x+1):
+        print(Vx)
+        memory.memory[registers.I + Vx] = registers.V[Vx]
+
+
+def LOAD(x):
+    for loc_x in range(0, x+1):
+        registers.V[loc_x] = memory.memory[registers.I + loc_x]
+
+
+
+def BCD_REP(Vx):
+    value = registers.V[Vx]
+
+    print(memory.memory[976:982])
+
+    memory.write(registers.I, value % 10)
+    value = value // 10
+
+    memory.write(registers.I + 1, value % 10)
+    value = value // 10
+
+    memory.write(registers.I + 2, value)
+
+
+    print(memory.memory[976:982])
+
+
+ 
 def execute_instruction(instruction, surface):
     if show_debug_info:
         debug.show_resources()
@@ -146,8 +191,21 @@ def execute_instruction(instruction, surface):
         vx = instruction[1]
         if (instruction[2:] == "29"):
             LDF_VX(int(vx, 16))
+        elif (instruction[2:] == "55"):
+            x_range = instruction[1]
+            STORE(int(x_range, 16))
+        elif (instruction[2:] == "65"):
+            x_range = instruction[1]
+            LOAD(int(x_range, 16))
+        elif (instruction[2:] == "33"):
+            Vx = instruction[1]
+            #BCD_REP(int(Vx, 16))
+        elif (instruction[2:] == "1E"):
+            Vx = instruction[1]
+            ADD_I(int(Vx, 16))
         else:
             LDX_VK(int(vx, 16))
+       
     elif (instruction[0] == "D"):
         vx = instruction[1]
         vy = instruction[2]
@@ -198,9 +256,11 @@ def execute_instruction(instruction, surface):
         XOR(int(Vx, 16), int(Vy, 16))
     elif (instruction[0] == "8" and instruction[3] == "E"):
         Vx = instruction[1]
-        print("HERE")
-        SHIFT(int(Vx, 16))
-        
+        SHIFT_LEFT(int(Vx, 16))
+    elif (instruction[0] == "8" and instruction[3] == "6"):
+        Vx = instruction[1]
+        SHIFT_RIGHT(int(Vx, 16))
+            
 
 def fetch():
     pc.increment()
