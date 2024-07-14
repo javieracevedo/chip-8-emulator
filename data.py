@@ -1,6 +1,5 @@
 import numpy as np
 
-
 font = {
     "0x0": [0xf0, 0x90, 0x90, 0x90, 0xf0],
     "0x1": [0x20, 0x60, 0x20, 0x20, 0x70],
@@ -20,40 +19,42 @@ font = {
     "0xf": [0xf0, 0x80, 0xf0, 0x80, 0x80]
 }
 
-
 # 8x5 Sprites
 sprites = [
-        0x18, 0x18, 0x7e, 0x7e, 0x7e,
-        0x66, 0x66, 0x7e, 0x7e, 0x7e
+    0x18, 0x18, 0x7e, 0x7e, 0x7e,
+    0x66, 0x66, 0x7e, 0x7e, 0x7e
 ]
-
 
 font_list = [
-        font["0x0"], 
-        font["0x1"], 
-        font["0x2"], 
-        font["0x3"], 
-        font["0x4"], 
-        font["0x5"],
-        font["0x6"],
-        font["0x7"],
-        font["0x8"],
-        font["0x9"],
-        font["0xa"],
-        font["0xb"],
-        font["0xc"],
-        font["0xd"],
-        font["0xe"],
-        font["0xf"]
+    font["0x0"],
+    font["0x1"],
+    font["0x2"],
+    font["0x3"],
+    font["0x4"],
+    font["0x5"],
+    font["0x6"],
+    font["0x7"],
+    font["0x8"],
+    font["0x9"],
+    font["0xa"],
+    font["0xb"],
+    font["0xc"],
+    font["0xd"],
+    font["0xe"],
+    font["0xf"]
 ]
 
-
 def load_font(memory):
-    flattened_font = np.array(font_list).flatten()
-    for i in range(0x50, 0x9F + 1):
-        memory.write(i, int(flattened_font[i % 80]))
+    flattened_font = [byte for char in font_list for byte in char]
+    for i in range(len(flattened_font)):
+        if 0x50 + i < len(memory.memory):
+            memory.write(0x50 + i, flattened_font[i])
+        else:
+            print(f"Warning: Attempt to write out of memory bounds at address {0x50 + i}")
 
 def load_sprites(memory):
-    for idx in range(0, len(sprites)):
-        memory.write(0x0 + idx, int(sprites[idx]))
-    
+    for idx in range(len(sprites)):
+        if idx < len(memory):
+            memory.write(0x0 + idx, sprites[idx])
+        else:
+            print(f"Warning: Attempt to write out of memory bounds at address {0x0 + idx}")

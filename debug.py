@@ -42,8 +42,12 @@ def show_resources():
     print()
     print()
 
-    print_heading("Font")
-    print(memory.memory[0x50:0x9F+1])
+    # print_heading("Font")
+    # print(memory.memory[0x50:0x9F+1])
+    print(pc.pc)
+
+    print(memory.memory[0x3d0])
+    print(registers.V[0])
 
     events.wait_for_keypress()
 

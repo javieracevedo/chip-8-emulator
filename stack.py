@@ -1,3 +1,3 @@
-stack = [0x00]
+stack = [0]
 
 

@@ -36,11 +36,8 @@ memory.init()
 
 data.load_font(memory)
 memory.load_rom("roms/bc_test.ch8")
-#stack.stack.append(0x03)
 
 run()
 
 
 
-# 16k
-# 
