@@ -414,7 +414,8 @@ def execute_instruction(instruction, surface):
         elif instruction[2:] == "55":
             for n in range(vx + 1): memory[I + n] = V[n]
         elif instruction[2:] == "65":
-            LOAD(vx)
+            for n in range(vx + 1): V[n] = memory[I + n]
+    I       I += 1
         elif instruction[2:] == "33":
             BCD_REP(vx)
         elif instruction[2:] == "1E":
