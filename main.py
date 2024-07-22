@@ -241,7 +241,6 @@ def JUMP(nnn):
 
 def JUMPN(nnn):
     global pc
-    pc = int(nnn, 16) + V[0]
 
 def SET_I(nnn):
     global I
@@ -441,7 +440,7 @@ def execute_instruction(instruction, surface):
         pc = int(nnn, 16)
     elif opcode == "B":
         nnn = instruction[1:]
-        JUMPN(nnn)
+        pc = int(nnn, 16) + V[0]
     elif opcode == "C":
         vx = instruction[1]
         nn = instruction[2:]
