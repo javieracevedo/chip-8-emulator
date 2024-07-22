@@ -209,10 +209,6 @@ def LDF_VX(Vx):
         else:
             I = Vx_addr
 
-def LDX_VX(Vx):
-    global V
-    key = wait_for_keypress()
-    V[Vx] = key
 
 def LDX_VX_07(Vx):
     global V
@@ -414,7 +410,8 @@ def execute_instruction(instruction, surface):
         elif instruction[2:] == "07":
             V[vx] = delay_timer
         elif instruction[2:] == "0A":
-            LDX_VX(vx)
+            key = wait_for_keypress()
+            V[vx] = key
         elif instruction[2:] == "18":
             LD_ST(vx)
     elif opcode == "D":
