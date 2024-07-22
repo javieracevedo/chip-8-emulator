@@ -438,7 +438,7 @@ def execute_instruction(instruction, surface):
         pygame.display.flip()
     elif opcode == "1":
         nnn = instruction[1:]
-        JUMP(nnn)
+        pc = int(nnn, 16)
     elif opcode == "B":
         nnn = instruction[1:]
         JUMPN(nnn)
