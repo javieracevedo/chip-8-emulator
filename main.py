@@ -216,7 +216,6 @@ def LDX_VX(Vx):
 
 def LDX_VX_07(Vx):
     global V
-    V[Vx] = delay_timer
 
 def LD_ST(Vx):
     global V
@@ -413,7 +412,7 @@ def execute_instruction(instruction, surface):
         elif instruction[2:] == "15":
             delay_timer = V[vx]
         elif instruction[2:] == "07":
-            LDX_VX_07(vx)
+            V[vx] = delay_timer
         elif instruction[2:] == "0A":
             LDX_VX(vx)
         elif instruction[2:] == "18":
