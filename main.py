@@ -403,9 +403,9 @@ def execute_instruction(instruction, surface):
         kk = int(instruction[2:], 16)
         V[vx] = kk
     elif opcode == "7":
-        vx = instruction[1]
-        nn = instruction[2:]
-        ADD_VX(int(vx, 16), nn)
+        vx = int(instruction[1], 16)
+        nn = int(instruction[2:], 16)
+        V[vx] = (V[vx] + nn) % 256
     elif opcode == "F":
         vx = instruction[1]
         if instruction[2:] == "29":
@@ -622,9 +622,9 @@ if len(sys.argv) > 1 and sys.argv[1] == 'debug':
 load_font(memory)
 
 
-load_rom("roms/1-chip8-logo.ch8")
+# load_rom("roms/1-chip8-logo.ch8")
 # load_rom("roms/2-ibm-logo.ch8")
-# load_rom("roms/3-corax.ch8")
+load_rom("roms/3-corax.ch8")
 # load_rom("roms/4-flags.ch8")
 # load_rom("roms/5-quirks.ch8")
 # load_rom("roms/6-keypad.ch8")
