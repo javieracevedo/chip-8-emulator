@@ -133,8 +133,6 @@ def wait_for_keypress():
 def int_to_hex_str(number):
     return hex(number)[2:].zfill(2)
 
-
-
 def scaled_draw(x, y, new_pixel_state, surface):
     global V
     x = x * 10
@@ -190,103 +188,10 @@ def load_font(memory):
 
 # *INSTRUCTIONS*
 
-# def CLS(surface):
-#     surface.fill(0)
-#     pygame.display.flip()
-
-# def LD_VX(Vx, kk):
-#     global V
-#     Vx = int(Vx, 16)
-#     V[Vx] = int(kk, 16)
-
-def LDF_VX(Vx):
-    global I
-    Vx_value = V[Vx]
-    Vx_addr = 0xF * 5 + 0x50
-    if Vx_addr is not None:
-        if isinstance(Vx_addr, str):
-            I = int(Vx_addr, 16)
-        else:
-            I = Vx_addr
-
-
-def LDX_VX_07(Vx):
-    global V
-
-def LD_ST(Vx):
-    global V
-    sound_timer = V[Vx]
-
-def DRW(Vx, Vy, n, surface):
-    global V
-    mem_slice = memory[I:I+n]
-    pos_x = V[Vx] % 64
-    pos_y = V[Vy] % 32
-
-    V[0xF] = 0
-
-    binaries = [format(integer, '08b') for integer in mem_slice]
-    for binary in binaries:
-        for idx in range(8):
-            pixel_state = ON if binary[idx] == '1' else OFF                
-            if (pos_y > 31 or pos_x + idx > 63):
-                break
-            scaled_draw(pos_x + idx, pos_y, pixel_state, surface)
-        pos_y += 1
-    pygame.display.flip()
-
-def JUMP(nnn):
-    global pc
-    pc = int(nnn, 16)
-
-def JUMPN(nnn):
-    global pc
-
-def ADD_VX(Vx, nn):
-    global V
-    V[Vx] = (V[Vx] + int(nn, 16)) % 256
-
-# def RET():
-#     global stack, pc
-#     if stack:
-#         pc = stack.pop()
-
 def CALL(nnn):
     global stack, pc
     stack.append(pc)
     pc = int(nnn, 16)
-
-def SKIP_3(Vx, nn):
-    global V, pc
-    if V[int(Vx, 16)] == int(nn, 16):
-        pc += 0x2
-
-def SKIP_4(Vx, nn):
-    global V, pc
-    if V[int(Vx, 16)] != int(nn, 16):
-        pc += 0x2
-
-def SKIP_5(Vx, Vy):
-    global V, pc
-    if V[Vx] == V[Vy]:
-        pc += 0x2
-
-def SKIP_9(Vx, Vy):
-    global V, pc
-    if V[Vx] != V[Vy]:
-        pc += 0x2
-
-def SKP(Vx):
-    global pc
-    key_codes = get_keycodes()
-    if (codes_key[str(V[Vx])] in key_codes):
-        pc += 0x2
-
-def SKNP(Vx):
-    global pc
-    key_codes = get_keycodes()
-    if (codes_key[str(V[Vx])] not in key_codes):
-        pc += 0x2
 
 def SUB_5(Vx, Vy):
     global V
@@ -336,19 +241,6 @@ def SHIFT_RIGHT(Vx, Vy):
     old_vx  = V[Vx]
     V[Vx] >>= 1
     V[0xF] = old_vx & 1
-
-def STORE(x):
-    global memory, I
-    for Vx in range(x + 1):
-        memory[I + Vx] = V[Vx]
-    I += 1
-
-def LOAD(x):
-    global memory, I
-    for loc_x in range(x + 1):
-        V[loc_x] = memory[I + loc_x]
-    I += 1
-
 
 # *END INSTRUCTIONS*
 
