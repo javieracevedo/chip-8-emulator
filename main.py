@@ -488,11 +488,14 @@ def execute_instruction(instruction, surface):
         vy = int(instruction[2], 16)
         if V[vx] != V[vy]: pc += 0x2
     elif opcode == "E":
-        vx = instruction[1]
+        vx = int(instruction[1], 16)
+        key_codes = get_keycodes()
         if (instruction[2:] == "A1"):
-            SKNP(int(vx, 16))
+            if (codes_key[str(V[vx])] not in key_codes):
+                pc += 0x2
         elif (instruction[2:] == "9E"):
-            SKP(int(vx, 16))
+            if (codes_key[str(V[vx])] in key_codes):
+                pc += 0x2
 
 def get_keycodes():
     keycodes = []
