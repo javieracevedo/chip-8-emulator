@@ -436,7 +436,6 @@ def run():
         start_time = time.time()
         elapsed_time = time.time() - start_time
 
-        pygame.display.flip()
         cycle(surface)
 
         if delay_timer > 0:
@@ -518,7 +517,6 @@ load_font(memory)
 # load_rom("roms/4-flags.ch8")
 # load_rom("roms/5-quirks.ch8")
 # load_rom("roms/6-keypad.ch8")
-
 
 # load_rom("roms/RPS.ch8")
 load_rom("roms/Airplane.ch8")
