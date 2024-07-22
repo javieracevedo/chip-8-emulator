@@ -385,7 +385,10 @@ def execute_instruction(instruction, surface):
             V[vx] = (V[vx] << 1) % 256
             V[0xF] = (old_vx >> 7) & 1
         elif subcode == "6":
-            SHIFT_RIGHT(vx, vy)
+            V[vx] = V[vy]
+            old_vx  = V[vx]
+            V[vx] >>= 1
+            V[0xF] = old_vx & 1
     elif opcode == "9":
         vx = int(instruction[1], 16)
         vy = int(instruction[2], 16)
