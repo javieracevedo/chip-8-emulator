@@ -186,60 +186,6 @@ def load_font(memory):
         else:
             print(f"Warning: Attempt to write out of memory bounds at address {0x50 + i}")
 
-# *INSTRUCTIONS*
-
-def CALL(nnn):
-    global stack, pc
-    stack.append(pc)
-    pc = int(nnn, 16)
-
-def SUB_5(Vx, Vy):
-    global V
-    Vx_value = V[Vx]
-    Vy_value = V[Vy]
-    V[Vx] = (Vx_value - Vy_value) % 256
-
-    V[0xF] = 1
-    if Vx_value < Vy_value:
-        V[0xF] = 0
-
-def SUB_7(Vx, Vy):
-    global V
-    Vx_value = V[Vx]
-    Vy_value = V[Vy]
-    V[Vx] = (Vy_value - Vx_value) % 256
-
-    V[0xF] = 1
-    if Vy_value < Vx_value:
-        V[0xF] = 0
-
-
-def AND(Vx, Vy):
-    global V
-    V[Vx] &= V[Vy]
-    V[0xF] = 0
-
-def XOR(Vx, Vy):
-    global V
-    V[Vx] ^= V[Vy]
-    V[0xF] = 0
-
-def SHIFT_LEFT(Vx, Vy):
-    global V
-    V[Vx] = V[Vy]
-    old_vx = V[Vx]
-    V[Vx] = (V[Vx] << 1) % 256
-    V[0xF] = (old_vx >> 7) & 1
-
-def SHIFT_RIGHT(Vx, Vy):
-    global V
-    V[Vx] = V[Vy]
-    old_vx  = V[Vx]
-    V[Vx] >>= 1
-    V[0xF] = old_vx & 1
-
-# *END INSTRUCTIONS*
-
 count = 0
 def execute_instruction(instruction, surface):
     global count, V, stack, pc, I, memory, delay_timer, sound_timer
