@@ -355,9 +355,6 @@ def LOAD(x):
         V[loc_x] = memory[I + loc_x]
     I += 1
 
-def RAND(Vx, nn):
-
-
 
 # *END INSTRUCTIONS*
 
