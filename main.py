@@ -211,7 +211,6 @@ def LDF_VX(Vx):
 
 def LDX_VX_15(Vx):
     global delay_timer
-    delay_timer = V[Vx]
 
 def LDX_VX(Vx):
     global V
@@ -374,7 +373,7 @@ def RAND(Vx, nn):
 
 count = 0
 def execute_instruction(instruction, surface):
-    global count, V, stack, pc, I, memory
+    global count, V, stack, pc, I, memory, delay_timer
 
     count += 1
     if show_debug_info and count > 900:
@@ -415,7 +414,7 @@ def execute_instruction(instruction, surface):
         elif instruction[2:] == "1E":
             I = (V[vx] + I) % 0x1000
         elif instruction[2:] == "15":
-            LDX_VX_15(vx)
+            delay_timer = V[vx]
         elif instruction[2:] == "07":
             LDX_VX_07(vx)
         elif instruction[2:] == "0A":
