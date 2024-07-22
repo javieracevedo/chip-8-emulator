@@ -190,9 +190,9 @@ def load_font(memory):
 
 # *INSTRUCTIONS*
 
-def CLS(surface):
-    surface.fill(0)
-    pygame.display.flip()
+# def CLS(surface):
+#     surface.fill(0)
+#     pygame.display.flip()
 
 def LD_VX(Vx, kk):
     global V
@@ -394,7 +394,8 @@ def execute_instruction(instruction, surface):
     opcode = instruction[0]
 
     if instruction == "00E0":
-        CLS(surface)
+        surface.fill(0)
+        pygame.display.flip()
     elif instruction == "00EE":
         RET()
     elif opcode == "6":
@@ -621,7 +622,7 @@ if len(sys.argv) > 1 and sys.argv[1] == 'debug':
 load_font(memory)
 
 
-load_rom("roms/1-chip8-logo.ch8")
+# load_rom("roms/1-chip8-logo.ch8")
 # load_rom("roms/2-ibm-logo.ch8")
 # load_rom("roms/3-corax.ch8")
 # load_rom("roms/4-flags.ch8")
