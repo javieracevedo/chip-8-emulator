@@ -260,10 +260,6 @@ def ADD_VX(Vx, nn):
     global V
     V[Vx] = (V[Vx] + int(nn, 16)) % 256
 
-def ADD_I(Vx):
-    global I
-    I = (V[Vx] + I) % 0x1000
-
 # def RET():
 #     global stack, pc
 #     if stack:
@@ -417,7 +413,7 @@ def execute_instruction(instruction, surface):
             value //= 10
             memory[I] = value % 10
         elif instruction[2:] == "1E":
-            ADD_I(vx)
+            I = (V[vx] + I) % 0x1000
         elif instruction[2:] == "15":
             LDX_VX_15(vx)
         elif instruction[2:] == "07":
