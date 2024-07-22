@@ -385,7 +385,7 @@ def BCD_REP(Vx):
 
 count = 0
 def execute_instruction(instruction, surface):
-    global count, V, stack, pc
+    global count, V, stack, pc, I
 
     count += 1
     if show_debug_info and count > 900:
@@ -407,25 +407,26 @@ def execute_instruction(instruction, surface):
         nn = int(instruction[2:], 16)
         V[vx] = (V[vx] + nn) % 256
     elif opcode == "F":
-        vx = instruction[1]
+        vx = int(instruction[1], 16)
         if instruction[2:] == "29":
-            LDF_VX(int(vx, 16))
+            vx_addr = 0xF * 5 + 0x50
+            if (vx_addr): I = vx_addr
         elif instruction[2:] == "55":
-            STORE(int(vx, 16))
+            STORE(vx)
         elif instruction[2:] == "65":
-            LOAD(int(vx, 16))
+            LOAD(vx)
         elif instruction[2:] == "33":
-            BCD_REP(int(vx, 16))
+            BCD_REP(vx)
         elif instruction[2:] == "1E":
-            ADD_I(int(vx, 16))
+            ADD_I(vx)
         elif instruction[2:] == "15":
-            LDX_VX_15(int(vx, 16))
+            LDX_VX_15(vx)
         elif instruction[2:] == "07":
-            LDX_VX_07(int(vx, 16))
+            LDX_VX_07(vx)
         elif instruction[2:] == "0A":
-            LDX_VX(int(vx, 16))
+            LDX_VX(vx)
         elif instruction[2:] == "18":
-            LD_ST(int(vx, 16))
+            LD_ST(vx)
     elif opcode == "D":
         vx = instruction[1]
         vy = instruction[2]
@@ -623,7 +624,7 @@ load_font(memory)
 
 
 # load_rom("roms/1-chip8-logo.ch8")
-# load_rom("roms/2-ibm-logo.ch8")
+# load_rom("roms/2-ibm-logo.ch8")None
 load_rom("roms/3-corax.ch8")
 # load_rom("roms/4-flags.ch8")
 # load_rom("roms/5-quirks.ch8")
