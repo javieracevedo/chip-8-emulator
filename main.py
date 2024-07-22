@@ -377,9 +377,13 @@ def execute_instruction(instruction, surface):
             else:
                 V[0xF] = 0
         elif subcode == "3":
-            XOR(vx, vy)
+            V[vx] ^= V[vy]
+            V[0xF] = 0
         elif subcode == "E":
-            SHIFT_LEFT(vx, vy)
+            V[vx] = V[vy]
+            old_vx = V[vx]
+            V[vx] = (V[vx] << 1) % 256
+            V[0xF] = (old_vx >> 7) & 1
         elif subcode == "6":
             SHIFT_RIGHT(vx, vy)
     elif opcode == "9":
