@@ -356,8 +356,7 @@ def LOAD(x):
     I += 1
 
 def RAND(Vx, nn):
-    r = random.randint(0, 255)
-    V[Vx] = r & int(nn, 16)
+
 
 
 # *END INSTRUCTIONS*
@@ -442,9 +441,9 @@ def execute_instruction(instruction, surface):
         nnn = instruction[1:]
         pc = int(nnn, 16) + V[0]
     elif opcode == "C":
-        vx = instruction[1]
-        nn = instruction[2:]
-        RAND(int(vx, 16), nn)
+        vx = int(instruction[1], 16)
+        nn = int(instruction[2:], 16)
+        V[vx] = random.randint(0, 255) & nn
     elif opcode == "A":
         nnn = instruction[1:]
         SET_I(nnn)
