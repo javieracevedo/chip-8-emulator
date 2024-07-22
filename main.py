@@ -264,10 +264,10 @@ def ADD_I(Vx):
     global I
     I = (V[Vx] + I) % 0x1000
 
-def RET():
-    global stack, pc
-    if stack:
-        pc = stack.pop()
+# def RET():
+#     global stack, pc
+#     if stack:
+#         pc = stack.pop()
 
 def CALL(nnn):
     global stack, pc
@@ -385,7 +385,7 @@ def BCD_REP(Vx):
 
 count = 0
 def execute_instruction(instruction, surface):
-    global count, V
+    global count, V, stack, pc
 
     count += 1
     if show_debug_info and count > 900:
@@ -397,7 +397,7 @@ def execute_instruction(instruction, surface):
         surface.fill(0)
         pygame.display.flip()
     elif instruction == "00EE":
-        RET()
+        pc = stack.pop()
     elif opcode == "6":
         vx = instruction[1]
         kk = instruction[2:]
