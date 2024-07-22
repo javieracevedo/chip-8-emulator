@@ -259,13 +259,11 @@ def CALL(nnn):
 def SKIP_3(Vx, nn):
     global V, pc
     if V[int(Vx, 16)] == int(nn, 16):
-        # increment()
         pc += 0x2
 
 def SKIP_4(Vx, nn):
     global V, pc
     if V[int(Vx, 16)] != int(nn, 16):
-        # increment()
         pc += 0x2
 
 def SKIP_5(Vx, Vy):
@@ -444,13 +442,15 @@ def execute_instruction(instruction, surface):
         nnn = instruction[1:]
         CALL(nnn)
     elif opcode == "3":
-        vx = instruction[1]
-        nn = instruction[2:]
-        SKIP_3(vx, nn)
+        vx = int(instruction[1], 16)
+        nn = int(instruction[2:], 16)
+        if (Vx == nn):
+            pc += 0x2
     elif opcode == "5":
-        vx = instruction[1]
-        vy = instruction[2]
-        SKIP_5(int(vx, 16), int(vy, 16))
+        vx = int(instruction[1], 16)
+        vy = int(instruction[2], 16)
+        if (V[vx] == vy):
+            pc += 0x2
     elif opcode == "4":
         vx = instruction[1]
         nn = instruction[2:]
