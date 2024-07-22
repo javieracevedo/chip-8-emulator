@@ -399,10 +399,9 @@ def execute_instruction(instruction, surface):
     elif instruction == "00EE":
         pc = stack.pop()
     elif opcode == "6":
-        vx = instruction[1]
-        kk = instruction[2:]
-        Vx = int(Vx, 16)
-        V[Vx] = int(kk, 16)
+        vx = int(instruction[1], 16)
+        kk = int(instruction[2:], 16)
+        V[vx] = kk
     elif opcode == "7":
         vx = instruction[1]
         nn = instruction[2:]
@@ -623,7 +622,7 @@ if len(sys.argv) > 1 and sys.argv[1] == 'debug':
 load_font(memory)
 
 
-# load_rom("roms/1-chip8-logo.ch8")
+load_rom("roms/1-chip8-logo.ch8")
 # load_rom("roms/2-ibm-logo.ch8")
 # load_rom("roms/3-corax.ch8")
 # load_rom("roms/4-flags.ch8")
