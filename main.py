@@ -444,12 +444,12 @@ def execute_instruction(instruction, surface):
     elif opcode == "3":
         vx = int(instruction[1], 16)
         nn = int(instruction[2:], 16)
-        if (vx == nn):
+        if (V[vx] == nn):
             pc += 0x2
     elif opcode == "5":
         vx = int(instruction[1], 16)
         vy = int(instruction[2], 16)
-        if (V[vx] == vy):
+        if (V[vx] == V[vy]):
             pc += 0x2
     elif opcode == "4":
         vx = instruction[1]
