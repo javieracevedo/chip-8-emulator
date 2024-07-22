@@ -373,13 +373,6 @@ def RAND(Vx, nn):
     r = random.randint(0, 255)
     V[Vx] = r & int(nn, 16)
 
-def BCD_REP(Vx):
-    value = V[Vx]
-    memory[I + 2] = value % 10
-    value //= 10
-    memory[I + 1] = value % 10
-    value //= 10
-    memory[I] = value % 10
 
 # *END INSTRUCTIONS*
 
@@ -415,9 +408,14 @@ def execute_instruction(instruction, surface):
             for n in range(vx + 1): memory[I + n] = V[n]
         elif instruction[2:] == "65":
             for n in range(vx + 1): V[n] = memory[I + n]
-    I       I += 1
+            I += 1
         elif instruction[2:] == "33":
-            BCD_REP(vx)
+            value = V[vx]
+            memory[I + 2] = value % 10
+            value //= 10
+            memory[I + 1] = value % 10
+            value //= 10
+            memory[I] = value % 10
         elif instruction[2:] == "1E":
             ADD_I(vx)
         elif instruction[2:] == "15":
