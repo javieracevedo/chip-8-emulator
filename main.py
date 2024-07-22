@@ -416,10 +416,26 @@ def execute_instruction(instruction, surface):
         elif instruction[2:] == "18":
             sound_timer = V[vx]
     elif opcode == "D":
-        vx = instruction[1]
-        vy = instruction[2]
-        n = instruction[3]
-        DRW(int(vx, 16), int(vy, 16), int(n, 16), surface)
+        vx = int(instruction[1], 16)
+        vy = int(instruction[2], 16)
+        n = int(instruction[3], 16)
+
+        mem_slice = memory[I:I+n]
+        pos_x = V[vx] % 64
+        pos_y = V[vy] % 32
+
+        V[0xF] = 0
+
+        binaries = [format(integer, '08b') for integer in mem_slice]
+        for binary in binaries:
+            for idx in range(8):
+                pixel_state = ON if binary[idx] == '1' else OFF                
+                if (pos_y > 31 or pos_x + idx > 63):
+                    break
+                scaled_draw(pos_x + idx, pos_y, pixel_state, surface)
+            pos_y += 1
+
+        pygame.display.flip()
     elif opcode == "1":
         nnn = instruction[1:]
         JUMP(nnn)
