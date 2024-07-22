@@ -349,32 +349,38 @@ def execute_instruction(instruction, surface):
         if V[vx] != nn:
             pc += 0x2
     elif opcode == "8":
-        vx = instruction[1]
-        vy = instruction[2]
+        vx = int(instruction[1], 16)
+        vy = int(instruction[2], 16)
         subcode = instruction[3]
         if (subcode == "0"):
-            V[int(vx, 16)] = V[int(vy, 16)]
+            V[vx] = V[vy]
         if subcode == "5":
             SUB_5(int(vx, 16), int(vy, 16))
+            old_vx = V[vx]
+            old_vy = V[vy]
+            V[Vx] = (V[vx] - V[vy]) % 256
+            V[0xF] = 1
+            if old_vx < old_vy:
+                V[0xF] = 0
         elif subcode == "7":
-            SUB_7(int(vx, 16), int(vy, 16))
+            SUB_7(vx, vy)
         elif subcode == "1":
-            OR(int(vx, 16), int(vy, 16))
+            OR(vx, vy)
         elif subcode == "2":
-            AND(int(vx, 16), int(vy, 16))
+            AND(vx, vy)
         elif subcode == "4":
-            result = V[int(vx, 16)] + V[int(vy, 16)]
-            V[int(vx, 16)] = (V[int(vx, 16)] + V[int(vy, 16)]) % 256
+            result = V[vx] + V[vy]
+            V[vx, 16] = (V[vx] + V[vy]) % 256
             if (result > 255):
                 V[0xF] = 1
             else:
                 V[0xF] = 0
         elif subcode == "3":
-            XOR(int(vx, 16), int(vy, 16))
+            XOR(vx, vy)
         elif subcode == "E":
-            SHIFT_LEFT(int(vx, 16), int(vy, 16))
+            SHIFT_LEFT(vx, vy)
         elif subcode == "6":
-            SHIFT_RIGHT(int(vx, 16), int(vy, 16))
+            SHIFT_RIGHT(vx, vy)
     elif opcode == "9":
         vx = int(instruction[1], 16)
         vy = int(instruction[2], 16)
