@@ -244,7 +244,6 @@ def JUMPN(nnn):
 
 def SET_I(nnn):
     global I
-    I = int(nnn, 16)
 
 def ADD_VX(Vx, nn):
     global V
@@ -442,8 +441,8 @@ def execute_instruction(instruction, surface):
         nn = int(instruction[2:], 16)
         V[vx] = random.randint(0, 255) & nn
     elif opcode == "A":
-        nnn = instruction[1:]
-        SET_I(nnn)
+        nnn = int(instruction[1:], 16)
+        I = nnn
     elif opcode == "2":
         nnn = instruction[1:]
         CALL(nnn)
