@@ -385,7 +385,7 @@ def BCD_REP(Vx):
 
 count = 0
 def execute_instruction(instruction, surface):
-    global count, V, stack, pc, I
+    global count, V, stack, pc, I, memory
 
     count += 1
     if show_debug_info and count > 900:
@@ -412,7 +412,7 @@ def execute_instruction(instruction, surface):
             vx_addr = 0xF * 5 + 0x50
             if (vx_addr): I = vx_addr
         elif instruction[2:] == "55":
-            STORE(vx)
+            for n in range(vx + 1): memory[I + n] = V[n]
         elif instruction[2:] == "65":
             LOAD(vx)
         elif instruction[2:] == "33":
