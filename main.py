@@ -355,22 +355,26 @@ def execute_instruction(instruction, surface):
         if (subcode == "0"):
             V[vx] = V[vy]
         if subcode == "5":
-            SUB_5(int(vx, 16), int(vy, 16))
             old_vx = V[vx]
             old_vy = V[vy]
-            V[Vx] = (V[vx] - V[vy]) % 256
+            V[vx] = (V[vx] - V[vy]) % 256
             V[0xF] = 1
             if old_vx < old_vy:
                 V[0xF] = 0
         elif subcode == "7":
-            SUB_7(vx, vy)
+            old_vx = V[vx]
+            old_vy = V[vy]
+            V[vx] = (V[vy] - V[vx]) % 256
+            V[0xF] = 1
+            if old_vy < old_vx:
+                V[0xF] = 0
         elif subcode == "1":
             OR(vx, vy)
         elif subcode == "2":
             AND(vx, vy)
         elif subcode == "4":
             result = V[vx] + V[vy]
-            V[vx, 16] = (V[vx] + V[vy]) % 256
+            V[vx] = (V[vx] + V[vy]) % 256
             if (result > 255):
                 V[0xF] = 1
             else:
@@ -521,11 +525,11 @@ load_font(memory)
 # load_rom("roms/2-ibm-logo.ch8")
 # load_rom("roms/3-corax.ch8")
 # load_rom("roms/4-flags.ch8")
-# load_rom("roms/5-quirks.ch8")
+load_rom("roms/5-quirks.ch8")
 # load_rom("roms/6-keypad.ch8")
 
 # load_rom("roms/RPS.ch8")
-load_rom("roms/Airplane.ch8")
+# load_rom("roms/Airplane.ch8")
 # load_rom("roms/Blitz.ch8")
 # load_rom("roms/AnimalRace.ch8")
 # load_rom("roms/AdditionProblems.ch8")
