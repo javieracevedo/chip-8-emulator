@@ -242,9 +242,6 @@ def JUMP(nnn):
 def JUMPN(nnn):
     global pc
 
-def SET_I(nnn):
-    global I
-
 def ADD_VX(Vx, nn):
     global V
     V[Vx] = (V[Vx] + int(nn, 16)) % 256
