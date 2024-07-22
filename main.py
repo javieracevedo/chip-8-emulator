@@ -270,7 +270,7 @@ def execute_instruction(instruction, surface):
     elif opcode == "F":
         vx = int(instruction[1], 16)
         if instruction[2:] == "29":
-            vx_addr = 0xF * 5 + 0x50
+            vx_addr = 0x50 + (V[vx] * 5)
             if (vx_addr): I = vx_addr
         elif instruction[2:] == "55":
             for n in range(vx + 1): memory[I + n] = V[n]
@@ -509,7 +509,6 @@ if len(sys.argv) > 1 and sys.argv[1] == 'debug':
     show_debug_info = True
 
 
-
 load_font(memory)
 
 
@@ -517,12 +516,12 @@ load_font(memory)
 # load_rom("roms/2-ibm-logo.ch8")
 # load_rom("roms/3-corax.ch8")
 # load_rom("roms/4-flags.ch8")
-load_rom("roms/5-quirks.ch8")
+# load_rom("roms/5-quirks.ch8")
 # load_rom("roms/6-keypad.ch8")
 
 
 # load_rom("roms/RPS.ch8")
-# load_rom("roms/Airplane.ch8")
+load_rom("roms/Airplane.ch8")
 # load_rom("roms/Blitz.ch8")
 # load_rom("roms/AnimalRace.ch8")
 # load_rom("roms/AdditionProblems.ch8")
