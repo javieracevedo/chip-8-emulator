@@ -209,9 +209,6 @@ def LDF_VX(Vx):
         else:
             I = Vx_addr
 
-def LDX_VX_15(Vx):
-    global delay_timer
-
 def LDX_VX(Vx):
     global V
     key = wait_for_keypress()
