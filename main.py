@@ -393,6 +393,7 @@ def execute_instruction(instruction, surface):
             if (vx_addr): I = vx_addr
         elif instruction[2:] == "55":
             for n in range(vx + 1): memory[I + n] = V[n]
+            I += 1
         elif instruction[2:] == "65":
             for n in range(vx + 1): V[n] = memory[I + n]
             I += 1
@@ -611,10 +612,10 @@ load_font(memory)
 
 
 # load_rom("roms/1-chip8-logo.ch8")
-# load_rom("roms/2-ibm-logo.ch8")None
-load_rom("roms/3-corax.ch8")
+# load_rom("roms/2-ibm-logo.ch8")
+# load_rom("roms/3-corax.ch8")
 # load_rom("roms/4-flags.ch8")
-# load_rom("roms/5-quirks.ch8")
+load_rom("roms/5-quirks.ch8")
 # load_rom("roms/6-keypad.ch8")
 
 
