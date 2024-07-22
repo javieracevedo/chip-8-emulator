@@ -215,8 +215,7 @@ def SUB_7(Vx, Vy):
 
 def OR(Vx, Vy):
     global V
-    V[Vx] |= V[Vy]
-    V[0xF] = 0
+
 
 def AND(Vx, Vy):
     global V
@@ -369,7 +368,8 @@ def execute_instruction(instruction, surface):
             if old_vy < old_vx:
                 V[0xF] = 0
         elif subcode == "1":
-            OR(vx, vy)
+            V[vx] |= V[vy]
+            V[0xF] = 0
         elif subcode == "2":
             AND(vx, vy)
         elif subcode == "4":
