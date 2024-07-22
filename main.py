@@ -365,7 +365,7 @@ def RAND(Vx, nn):
 
 count = 0
 def execute_instruction(instruction, surface):
-    global count, V, stack, pc, I, memory, delay_timer
+    global count, V, stack, pc, I, memory, delay_timer, sound_timer
 
     count += 1
     if show_debug_info and count > 900:
