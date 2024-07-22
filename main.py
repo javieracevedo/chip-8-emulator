@@ -13,8 +13,15 @@ V = [0] * 16
 I = 0
 stack = [0]
 pc = 0x200
+
 delay_timer = 0
 sound_timer = 0
+
+CLOCK_SPEED_HZ = 600
+CYCLE_DELAY = 1.0 / CLOCK_SPEED_HZ
+
+show_debug_info = False
+if len(sys.argv) > 1 and sys.argv[1] == 'debug': show_debug_info = True
 
 
 # *DATA*
@@ -186,12 +193,10 @@ def load_font(memory):
         else:
             print(f"Warning: Attempt to write out of memory bounds at address {0x50 + i}")
 
-count = 0
 def execute_instruction(instruction, surface):
-    global count, V, stack, pc, I, memory, delay_timer, sound_timer
+    global V, stack, pc, I, memory, delay_timer, sound_timer
 
-    count += 1
-    if show_debug_info and count > 900:
+    if show_debug_info:
         show_resources()
 
     opcode = instruction[0]
@@ -273,8 +278,9 @@ def execute_instruction(instruction, surface):
         nnn = int(instruction[1:], 16)
         I = nnn
     elif opcode == "2":
-        nnn = instruction[1:]
-        CALL(nnn)
+        nnn = int(instruction[1:], 16)
+        stack.append(pc)
+        pc = nnn
     elif opcode == "3":
         vx = int(instruction[1], 16)
         nn = int(instruction[2:], 16)
@@ -314,7 +320,8 @@ def execute_instruction(instruction, surface):
             V[vx] |= V[vy]
             V[0xF] = 0
         elif subcode == "2":
-            AND(vx, vy)
+            V[vx] &= V[vy]
+            V[0xF] = 0
         elif subcode == "4":
             result = V[vx] + V[vy]
             V[vx] = (V[vx] + V[vy]) % 256
@@ -358,10 +365,9 @@ def get_keycodes():
 
 def fetch():
     global pc
-    val = memory[pc:pc+2]
-    # increment()
+    instruction = memory[pc:pc+2]
     pc += 0x2
-    return val
+    return instruction
 
 def decode(memory_slice):
     first_byte = int_to_hex_str(memory_slice[0])
@@ -377,21 +383,19 @@ def cycle(surface):
     instruction = decode(instruction)
     execute_instruction(instruction.upper(), surface)
 
-
-clock_speed_hz = 600
-cycle_delay = 1.0 / clock_speed_hz
-
 def run():
     global delay_timer, sound_timer
+
     running = True
- 
+
     pygame.init()
     pygame.key.set_repeat(10, 10)
-
     pygame.display.set_caption("Chip-8")
+
     surface = pygame.display.set_mode((640, 320))
     
     pygame.event.clear()
+    
     while running:
         start_time = time.time()
         elapsed_time = time.time() - start_time
@@ -404,8 +408,8 @@ def run():
         if sound_timer > 0:
             sound_timer -= 1
         
-        if elapsed_time < cycle_delay:
-            time.sleep(cycle_delay - elapsed_time)
+        if elapsed_time < CYCLE_DELAY:
+            time.sleep(CYCLE_DELAY - elapsed_time)
 
 
 def print_heading(title):
@@ -416,7 +420,6 @@ def print_heading(title):
 
 def get_instruction(pc_address):
     return ''.join(decode(memory[pc_address:pc_address+2]))
-
 
 def show_resources():
     os.system('clear')
@@ -444,46 +447,19 @@ def show_resources():
     print()
     print()
 
-
-    print_heading("Line Count")
-
-    print("Count: ", count)
-    print()
-    print()
-
-    # print_heading("Font")
-    # print(memory.memory[0x50:0x9F+1])
-    print(pc)
-
-    print(memory[0x3d0])
-    print(V[0])
-
     wait_for_keypress()
 
 
 
 
-show_debug_info = False
-if len(sys.argv) > 1 and sys.argv[1] == 'debug':
-    show_debug_info = True
 
 
 load_font(memory)
-
-
 # load_rom("roms/1-chip8-logo.ch8")
 # load_rom("roms/2-ibm-logo.ch8")
-# load_rom("roms/3-corax.ch8")
+load_rom("roms/3-corax.ch8")
 # load_rom("roms/4-flags.ch8")
-load_rom("roms/5-quirks.ch8")
+# load_rom("roms/5-quirks.ch8")
 # load_rom("roms/6-keypad.ch8")
-
-# load_rom("roms/RPS.ch8")
-# load_rom("roms/Airplane.ch8")
-# load_rom("roms/Blitz.ch8")
-# load_rom("roms/AnimalRace.ch8")
-# load_rom("roms/AdditionProblems.ch8")
-# load_rom("roms/Pong.ch8")
-# load_rom("roms/flightrunner.ch8")
 
 run()
