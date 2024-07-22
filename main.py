@@ -444,7 +444,7 @@ def execute_instruction(instruction, surface):
     elif opcode == "3":
         vx = int(instruction[1], 16)
         nn = int(instruction[2:], 16)
-        if (Vx == nn):
+        if (vx == nn):
             pc += 0x2
     elif opcode == "5":
         vx = int(instruction[1], 16)
