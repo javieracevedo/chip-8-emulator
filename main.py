@@ -413,7 +413,7 @@ def execute_instruction(instruction, surface):
             key = wait_for_keypress()
             V[vx] = key
         elif instruction[2:] == "18":
-            LD_ST(vx)
+            sound_timer = V[vx]
     elif opcode == "D":
         vx = instruction[1]
         vy = instruction[2]
