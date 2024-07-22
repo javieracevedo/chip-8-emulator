@@ -194,10 +194,10 @@ def load_font(memory):
 #     surface.fill(0)
 #     pygame.display.flip()
 
-def LD_VX(Vx, kk):
-    global V
-    Vx = int(Vx, 16)
-    V[Vx] = int(kk, 16)
+# def LD_VX(Vx, kk):
+#     global V
+#     Vx = int(Vx, 16)
+#     V[Vx] = int(kk, 16)
 
 def LDF_VX(Vx):
     global I
@@ -401,7 +401,8 @@ def execute_instruction(instruction, surface):
     elif opcode == "6":
         vx = instruction[1]
         kk = instruction[2:]
-        LD_VX(vx, kk)
+        Vx = int(Vx, 16)
+        V[Vx] = int(kk, 16)
     elif opcode == "7":
         vx = instruction[1]
         nn = instruction[2:]
