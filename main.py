@@ -213,9 +213,6 @@ def SUB_7(Vx, Vy):
     if Vy_value < Vx_value:
         V[0xF] = 0
 
-def OR(Vx, Vy):
-    global V
-
 
 def AND(Vx, Vy):
     global V
