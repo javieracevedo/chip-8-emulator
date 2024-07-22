@@ -452,9 +452,10 @@ def execute_instruction(instruction, surface):
         if (V[vx] == V[vy]):
             pc += 0x2
     elif opcode == "4":
-        vx = instruction[1]
-        nn = instruction[2:]
-        SKIP_4(vx, nn)
+        vx = int(instruction[1], 16)
+        nn = int(instruction[2:], 16)
+        if V[vx] != nn:
+            pc += 0x2
     elif opcode == "8":
         vx = instruction[1]
         vy = instruction[2]
@@ -483,10 +484,9 @@ def execute_instruction(instruction, surface):
         elif subcode == "6":
             SHIFT_RIGHT(int(vx, 16), int(vy, 16))
     elif opcode == "9":
-        vx = instruction[1]
-        vy = instruction[2]
-        subcode = instruction[3]
-        SKIP_9(int(vx, 16), int(vy, 16))
+        vx = int(instruction[1], 16)
+        vy = int(instruction[2], 16)
+        if V[vx] != V[vy]: pc += 0x2
     elif opcode == "E":
         vx = instruction[1]
         if (instruction[2:] == "A1"):
