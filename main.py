@@ -8,76 +8,38 @@ import numpy as np
 import random
 
 
-memory = [0] * 4096 # 4KB memory
+MEM_SIZE_KB = 4096
+CLOCK_SPEED_HZ = 640
+CYCLE_DELAY = 1.0 / CLOCK_SPEED_HZ
+
+memory = [0] * MEM_SIZE_KB
 V = [0] * 16
 I = 0
 stack = [0]
 pc = 0x200
-
 delay_timer = 0
 sound_timer = 0
 
-CLOCK_SPEED_HZ = 600
-CYCLE_DELAY = 1.0 / CLOCK_SPEED_HZ
-
-show_debug_info = False
-if len(sys.argv) > 1 and sys.argv[1] == 'debug': show_debug_info = True
-
-
-# *DATA*
-
-font = {
-    "0x0": [0xf0, 0x90, 0x90, 0x90, 0xf0],
-    "0x1": [0x20, 0x60, 0x20, 0x20, 0x70],
-    "0x2": [0xf0, 0x10, 0xf0, 0x80, 0xf0],
-    "0x3": [0xf0, 0x10, 0xf0, 0x10, 0xf0],
-    "0x4": [0x90, 0x90, 0xf0, 0x10, 0x10],
-    "0x5": [0xf0, 0x80, 0xf0, 0x10, 0xf0],
-    "0x6": [0xf0, 0x80, 0xf0, 0x90, 0xf0],
-    "0x7": [0xf0, 0x10, 0x20, 0x40, 0x40],
-    "0x8": [0xf0, 0x90, 0xf0, 0x90, 0xf0],
-    "0x9": [0xf0, 0x90, 0xf0, 0x10, 0xf0],
-    "0xa": [0xf0, 0x90, 0xf0, 0x90, 0x90],
-    "0xb": [0xe0, 0x90, 0xe0, 0x90, 0xe0],
-    "0xc": [0xf0, 0x80, 0x80, 0x80, 0xf0],
-    "0xd": [0xe0, 0x90, 0x90, 0x90, 0xe0],
-    "0xe": [0xf0, 0x80, 0xf0, 0x80, 0xf0],
-    "0xf": [0xf0, 0x80, 0xf0, 0x80, 0x80]
-}
-
-
 font_list = [
-    font["0x0"],
-    font["0x1"],
-    font["0x2"],
-    font["0x3"],
-    font["0x4"],
-    font["0x5"],
-    font["0x6"],
-    font["0x7"],
-    font["0x8"],
-    font["0x9"],
-    font["0xa"],
-    font["0xb"],
-    font["0xc"],
-    font["0xd"],
-    font["0xe"],
-    font["0xf"]
+    [0xf0, 0x90, 0x90, 0x90, 0xf0],
+    [0x20, 0x60, 0x20, 0x20, 0x70],
+    [0xf0, 0x10, 0xf0, 0x80, 0xf0],
+    [0x90, 0x90, 0xf0, 0x10, 0x10],
+    [0xf0, 0x80, 0xf0, 0x10, 0xf0],
+    [0xf0, 0x80, 0xf0, 0x90, 0xf0],
+    [0xf0, 0x10, 0x20, 0x40, 0x40],
+    [0xf0, 0x90, 0xf0, 0x90, 0xf0],
+    [0xf0, 0x90, 0xf0, 0x10, 0xf0],
+    [0xf0, 0x90, 0xf0, 0x90, 0x90],
+    [0xe0, 0x90, 0xe0, 0x90, 0xe0],
+    [0xf0, 0x80, 0x80, 0x80, 0xf0],
+    [0xe0, 0x90, 0x90, 0x90, 0xe0],
+    [0xf0, 0x80, 0xf0, 0x80, 0xf0],
+    [0xf0, 0x80, 0xf0, 0x80, 0x80]
 ]
 
-# *END DATA*
-
-
-# *DISPLAY STATES*
-
-ON = pygame.Color(255, 255, 255)
-OFF = pygame.Color(0, 0, 0)
-
-# *END DISPLAY STATES*
-
-# *KEYCODES*
-
 supported_keycodes = {
+    "56": 8,
     "48": 0,
     "49": 1,
     "50": 2,
@@ -86,7 +48,6 @@ supported_keycodes = {
     "53": 5,
     "54": 6,
     "55": 7,
-    "56": 8,
     "57": 9,
     "97": 10,  # 'A'
     "98": 11,  # 'B'
@@ -97,6 +58,7 @@ supported_keycodes = {
 }
 
 codes_key = {
+    "8": 56,
     "0": 48,
     "1": 49,
     "2": 50,
@@ -105,7 +67,6 @@ codes_key = {
     "5": 53,
     "6": 54,
     "7": 55,
-    "8": 56,
     "9": 57,
     "10": 97,
     "11": 98,
@@ -115,65 +76,22 @@ codes_key = {
     "15": 102
 }
 
-# *END KEYCODES*
-
-
-def wait_for_keypress():
-    global delay_timer
-    pygame.event.clear()
-
-    while True:
-        if delay_timer > 0:
-            delay_timer -= 1
-        event = pygame.event.wait()
-
-        if (event.type == pygame.QUIT):
-            pygame.quit()
-        elif (event.type == pygame.KEYUP):
-            if str(event.key) in supported_keycodes:
-                return supported_keycodes[str(event.key)]
-
-# def int_to_bin_str(int_val):
-#     bin_str = format(int_val, '08b')
-#     return bin_str
-
-def int_to_hex_str(number):
-    return hex(number)[2:].zfill(2)
-
 def scaled_draw(x, y, new_pixel_state, surface):
     global V
     x = x * 10
     y = y * 10
 
-    if (new_pixel_state == ON):
-        new_pixel_state = True
+    new_pixel_state = True if new_pixel_state == pygame.Color(255, 255, 255) else False
+    current_pixel_state = True if surface.get_at((x, y % 320)) == pygame.Color(255, 255, 255) else  False
+    pixel = current_pixel_state != new_pixel_state
+
+    if (pixel):
+        pygame.draw.rect(surface, pygame.Color(255, 255, 255), [x, y, 10, 10]) 
     else:
-        new_pixel_state = False
-
-    
-    current_pixel_state = -1
-
-    for pos_x in range(x, x+10):
-        for pos_y in range(y, y+10):
-
-            if (surface.get_at((pos_x, pos_y % 320)) == ON):
-                current_pixel_state = True
-            else:
-                current_pixel_state = False
-           
-            pixel = current_pixel_state != new_pixel_state
-            if (pixel):
-                surface.set_at((pos_x, pos_y), ON)
-            else:
-                if (current_pixel_state and new_pixel_state):
-                    surface.set_at((pos_x, pos_y), OFF)
-                    V[0xF] = 1
-
-def read(addr_idx):
-    if addr_idx >= len(memory):  # Fix off-by-one error
-        print("Address is larger than memory size")
-        return
-    return memory[addr_idx]
+        pygame.draw.rect(surface, pygame.Color(0, 0, 0), [x, y, 10, 10])
+        if (current_pixel_state and new_pixel_state):
+            surface.set_at((x, y), pygame.Color(0, 0, 0))
+            V[0xF] = 1
 
 def load_rom(file_path):
     global memory
@@ -184,23 +102,34 @@ def load_rom(file_path):
         byte = struct.unpack("B", rom_data[idx:idx + 1])[0]
         memory[idx + 0x200] = byte
 
-
 def load_font(memory):
     flattened_font = [byte for char in font_list for byte in char]
     for i in range(len(flattened_font)):
-        if 0x50 + i < len(memory):
+        if 0x50 + i < MEM_SIZE_KB:
             memory[0x50 + i] = flattened_font[i]
         else:
             print(f"Warning: Attempt to write out of memory bounds at address {0x50 + i}")
 
+def wait_for_keypress():
+    global delay_timer
+    pygame.event.clear()
+
+    while True:
+        if delay_timer > 0:
+            delay_timer -= 1
+
+        event = pygame.event.wait()
+
+        if (event.type == pygame.QUIT):
+            pygame.quit()
+        elif (event.type == pygame.KEYUP):
+            if str(event.key) in supported_keycodes:
+                return supported_keycodes[str(event.key)]
+
 def execute_instruction(instruction, surface):
     global V, stack, pc, I, memory, delay_timer, sound_timer
 
-    if show_debug_info:
-        show_resources()
-
     opcode = instruction[0]
-
     if instruction == "00E0":
         surface.fill(0)
         pygame.display.flip()
@@ -257,7 +186,7 @@ def execute_instruction(instruction, surface):
         binaries = [format(integer, '08b') for integer in mem_slice]
         for binary in binaries:
             for idx in range(8):
-                pixel_state = ON if binary[idx] == '1' else OFF                
+                pixel_state = pygame.Color(255, 255, 255) if binary[idx] == '1' else pygame.Color(0, 0, 0)                
                 if (pos_y > 31 or pos_x + idx > 63):
                     break
                 scaled_draw(pos_x + idx, pos_y, pixel_state, surface)
@@ -348,20 +277,14 @@ def execute_instruction(instruction, surface):
         if V[vx] != V[vy]: pc += 0x2
     elif opcode == "E":
         vx = int(instruction[1], 16)
-        key_codes = get_keycodes()
+        key_codes = list(map(lambda e: e.key if e.type == pygame.KEYDOWN else None, pygame.event.get()))
+
         if (instruction[2:] == "A1"):
             if (codes_key[str(V[vx])] not in key_codes):
                 pc += 0x2
         elif (instruction[2:] == "9E"):
             if (codes_key[str(V[vx])] in key_codes):
                 pc += 0x2
-
-def get_keycodes():
-    keycodes = []
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            keycodes.append(event.key)
-    return keycodes
 
 def fetch():
     global pc
@@ -370,10 +293,9 @@ def fetch():
     return instruction
 
 def decode(memory_slice):
-    first_byte = int_to_hex_str(memory_slice[0])
-    
+    first_byte = hex(memory_slice[0])[2:].zfill(2)
     if (len(memory_slice) == 2):
-        second_byte = int_to_hex_str(memory_slice[1])
+        second_byte = hex(memory_slice[1])[2:].zfill(2)
         return first_byte + second_byte
     else:
         return first_byte
@@ -389,7 +311,8 @@ def run():
     running = True
 
     pygame.init()
-    pygame.key.set_repeat(10, 10)
+
+    pygame.key.set_repeat(1)
     pygame.display.set_caption("Chip-8")
 
     surface = pygame.display.set_mode((640, 320))
@@ -411,55 +334,6 @@ def run():
         if elapsed_time < CYCLE_DELAY:
             time.sleep(CYCLE_DELAY - elapsed_time)
 
-
-def print_heading(title):
-    print(title)
-    print("-" * 40)
-    print()
-    print()
-
-def get_instruction(pc_address):
-    return ''.join(decode(memory[pc_address:pc_address+2]))
-
-def show_resources():
-    os.system('clear')
-
-    print_heading("Registers")
-    print("I: ", hex(I))
-     
-    for idx in range(0, len(V)):
-        print("V" + str(idx) + ": " + str(V[idx]))
-    print()
-    print()
-
-    print_heading("Stack")
-    for idx in range(0, len(stack)):
-        print(str(idx) + ": " + hex(stack[idx]))
-    print()
-    print()
-
-    print_heading("Program Counter")
-    print("Address: " + hex(pc))
-
-    print("Instruction (-2): " + get_instruction(pc - 4).upper())
-    print("Instruction (-1): " + get_instruction(pc - 2).upper())
-    print("Instruction (c): " + get_instruction(pc).upper())
-    print()
-    print()
-
-    wait_for_keypress()
-
-
-
-
-
-
 load_font(memory)
-# load_rom("roms/1-chip8-logo.ch8")
-# load_rom("roms/2-ibm-logo.ch8")
-load_rom("roms/3-corax.ch8")
-# load_rom("roms/4-flags.ch8")
-# load_rom("roms/5-quirks.ch8")
-# load_rom("roms/6-keypad.ch8")
 
 run()
