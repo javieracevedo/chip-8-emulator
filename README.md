@@ -2,7 +2,14 @@
 
 This is my quick and dirty implementation of the CHIP-8 virtual machine / interpreter from the 1970s, developed as a weekend project. Below is an overview of its features and specifications.
 
-![ibm rom demo](ibm.png)
+
+#### IBM ROM
+
+![ibm rom demo](demos/ibm.png)
+
+#### Airplane ROM
+
+![Hello](demos/airplane.gif)
 
 ## VM Description
 
@@ -20,9 +27,11 @@ The CHIP-8 has 16 registers (V0...VF). VF is typically used as a flag for carry 
 
 The CHIP-8 virtual machine includes a built-in font with characters 0 through F. Here are the character sprite specifications:
 
-| ![space-1.jpg](font.jpeg) | 
+| ![space-1.jpg](demos/font.jpeg) |
 |:--:| 
 | *[Source](https://www.cs.columbia.edu/~sedwards/classes/2016/4840-spring/designs/Chip8.pdf)* |
+
+
 
 
 ### Display
