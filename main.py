@@ -129,54 +129,52 @@ def wait_for_keypress():
 def execute_instruction(instruction, surface):
     global V, stack, pc, I, memory, delay_timer, sound_timer
 
-    opcode = instruction[0]
-    if instruction == "00E0":
+    lhs_subcode = instruction >> 12 & 0x000F
+    rhs_subcode = instruction & 0x000F
+    vx = instruction >> 8 & 0x000F
+    vy = instruction >> 4 & 0x000F
+    n = instruction & 0x000f
+    nn = instruction & 0x00FF; kk = nn
+    nnn = instruction & 0x0FFF
+
+    if instruction == 0x00E0:
         surface.fill(0)
         pygame.display.flip()
-    elif instruction == "00EE":
+    elif instruction == 0x00EE:
         pc = stack.pop()
-    elif opcode == "6":
-        vx = int(instruction[1], 16)
-        kk = int(instruction[2:], 16)
+    elif lhs_subcode == 0x6:
         V[vx] = kk
-    elif opcode == "7":
-        vx = int(instruction[1], 16)
-        nn = int(instruction[2:], 16)
+    elif lhs_subcode == 0x7:
         V[vx] = (V[vx] + nn) % 256
-    elif opcode == "F":
-        vx = int(instruction[1], 16)
-        if instruction[2:] == "29":
+    elif lhs_subcode == 0x0F:
+        if nn == 0x29:
             vx_addr = 0x50 + (V[vx] * 5)
             if (vx_addr): I = vx_addr
-        elif instruction[2:] == "55":
+        elif nn == 0x55:
             for n in range(vx + 1): memory[I + n] = V[n]
             I += 1
-        elif instruction[2:] == "65":
+        elif nn == 0x65:
             for n in range(vx + 1): V[n] = memory[I + n]
             I += 1
-        elif instruction[2:] == "33":
+        elif nn == 0x33:
             value = V[vx]
             memory[I + 2] = value % 10
             value //= 10
             memory[I + 1] = value % 10
             value //= 10
             memory[I] = value % 10
-        elif instruction[2:] == "1E":
+        elif nn == 0x1E:
             I = (V[vx] + I) % 0x1000
-        elif instruction[2:] == "15":
+        elif nn == 0x15:
             delay_timer = V[vx]
-        elif instruction[2:] == "07":
+        elif nn == 0x07:
             V[vx] = delay_timer
-        elif instruction[2:] == "0A":
+        elif nn == 0xA:
             key = wait_for_keypress()
             V[vx] = key
-        elif instruction[2:] == "18":
+        elif nn == 0x18:
             sound_timer = V[vx]
-    elif opcode == "D":
-        vx = int(instruction[1], 16)
-        vy = int(instruction[2], 16)
-        n = int(instruction[3], 16)
-
+    elif lhs_subcode == 0xD:
         mem_slice = memory[I:I+n]
         pos_x = V[vx] % 64
         pos_y = V[vy] % 32
@@ -187,102 +185,86 @@ def execute_instruction(instruction, surface):
         for binary in binaries:
             for idx in range(8):
                 pixel_state = pygame.Color(255, 255, 255) if binary[idx] == '1' else pygame.Color(0, 0, 0)                
+                # If you start drawing before the limit (width) then draw what you can draw, but
+                # once you pass the limit, stop
                 if (pos_y > 31 or pos_x + idx > 63):
                     break
                 scaled_draw(pos_x + idx, pos_y, pixel_state, surface)
             pos_y += 1
 
         pygame.display.flip()
-    elif opcode == "1":
-        nnn = instruction[1:]
-        pc = int(nnn, 16)
-    elif opcode == "B":
-        nnn = instruction[1:]
-        pc = int(nnn, 16) + V[0]
-    elif opcode == "C":
-        vx = int(instruction[1], 16)
-        nn = int(instruction[2:], 16)
+    elif lhs_subcode == 0x1:
+        pc = nnn
+    elif lhs_subcode == 0xB:
+        pc = nnn
+    elif lhs_subcode == 0xC:
         V[vx] = random.randint(0, 255) & nn
-    elif opcode == "A":
-        nnn = int(instruction[1:], 16)
+    elif lhs_subcode == 0xA:
         I = nnn
-    elif opcode == "2":
-        nnn = int(instruction[1:], 16)
+    elif lhs_subcode == 0x2:
         stack.append(pc)
         pc = nnn
-    elif opcode == "3":
-        vx = int(instruction[1], 16)
-        nn = int(instruction[2:], 16)
+    elif lhs_subcode == 0x3:
         if (V[vx] == nn):
             pc += 0x2
-    elif opcode == "5":
-        vx = int(instruction[1], 16)
-        vy = int(instruction[2], 16)
+    elif lhs_subcode == 0x5:
         if (V[vx] == V[vy]):
             pc += 0x2
-    elif opcode == "4":
-        vx = int(instruction[1], 16)
-        nn = int(instruction[2:], 16)
+    elif lhs_subcode == 0x4:
         if V[vx] != nn:
             pc += 0x2
-    elif opcode == "8":
-        vx = int(instruction[1], 16)
-        vy = int(instruction[2], 16)
-        subcode = instruction[3]
-        if (subcode == "0"):
+    elif lhs_subcode == 0x8:
+        subcode = rhs_subcode
+        if (subcode == 0x0):
             V[vx] = V[vy]
-        if subcode == "5":
+        if subcode == 0x5:
             old_vx = V[vx]
             old_vy = V[vy]
             V[vx] = (V[vx] - V[vy]) % 256
             V[0xF] = 1
             if old_vx < old_vy:
                 V[0xF] = 0
-        elif subcode == "7":
+        elif subcode == 0x7:
             old_vx = V[vx]
             old_vy = V[vy]
             V[vx] = (V[vy] - V[vx]) % 256
             V[0xF] = 1
             if old_vy < old_vx:
                 V[0xF] = 0
-        elif subcode == "1":
+        elif subcode == 0x1:
             V[vx] |= V[vy]
             V[0xF] = 0
-        elif subcode == "2":
+        elif subcode == 0x2:
             V[vx] &= V[vy]
             V[0xF] = 0
-        elif subcode == "4":
+        elif subcode == 0x4:
             result = V[vx] + V[vy]
             V[vx] = (V[vx] + V[vy]) % 256
             if (result > 255):
                 V[0xF] = 1
             else:
                 V[0xF] = 0
-        elif subcode == "3":
+        elif subcode == 0x3:
             V[vx] ^= V[vy]
             V[0xF] = 0
-        elif subcode == "E":
+        elif subcode == 0xE:
             V[vx] = V[vy]
             old_vx = V[vx]
             V[vx] = (V[vx] << 1) % 256
             V[0xF] = (old_vx >> 7) & 1
-        elif subcode == "6":
+        elif subcode == 0x6:
             V[vx] = V[vy]
             old_vx  = V[vx]
             V[vx] >>= 1
             V[0xF] = old_vx & 1
-    elif opcode == "9":
-        vx = int(instruction[1], 16)
-        vy = int(instruction[2], 16)
+    elif lhs_subcode == 0x9:
         if V[vx] != V[vy]: pc += 0x2
-    elif opcode == "E":
-        vx = int(instruction[1], 16)
+    elif lhs_subcode == 0xE:
         key_codes = list(map(lambda e: e.key if e.type == pygame.KEYDOWN else None, pygame.event.get()))
-
-        if (instruction[2:] == "A1"):
+        if (nn == 0xA1):
             if (codes_key[str(V[vx])] not in key_codes):
                 pc += 0x2
-        elif (instruction[2:] == "9E"):
+        elif (nn == 0x9E):
             if (codes_key[str(V[vx])] in key_codes):
                 pc += 0x2
 
@@ -296,14 +278,14 @@ def decode(memory_slice):
     first_byte = hex(memory_slice[0])[2:].zfill(2)
     if (len(memory_slice) == 2):
         second_byte = hex(memory_slice[1])[2:].zfill(2)
-        return first_byte + second_byte
+        return int(first_byte + second_byte, 16)
     else:
-        return first_byte
+        return int(first_byte, 16)
 
 def cycle(surface):
     instruction = fetch()
     instruction = decode(instruction)
-    execute_instruction(instruction.upper(), surface)
+    execute_instruction(instruction, surface)
 
 def run():
     global delay_timer, sound_timer
@@ -335,5 +317,5 @@ def run():
             time.sleep(CYCLE_DELAY - elapsed_time)
 
 load_font(memory)
-
+load_rom("roms/Airplane.ch8")
 run()
