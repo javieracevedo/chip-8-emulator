@@ -4,6 +4,8 @@ Implementation of the CHIP-8 interpreter / virtual machine from the 1970s, that 
 
 # Demo
 
+Some ROMs I downloaded from the internet.
+
 #### Airplane
 
 ![airplane](https://github.com/user-attachments/assets/9ef545b3-58c9-4cf5-8dcc-7783c4c1002e)
