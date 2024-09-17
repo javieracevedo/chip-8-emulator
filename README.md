@@ -1,27 +1,66 @@
-# Chip-8 Virtual Machine / Interpreter
+## About the Project
 
-Implementation of the CHIP-8 interpreter / virtual machine from the 1970s, that started as a weekend project; below is an overview of its features and specifications.
+This is an implementation of the CHIP-8 interpreter / VM / "Emulator" from the 1970s. Below is an overview of its features, specifications ,and the tools I used to implement it, as well as how to run it.
 
-# Demo
+### Built with
 
-Some ROMs I downloaded from the internet.
+- Python 3.10.12
+- Pygame 2.5.2
+- Numpy 1.26.4
 
-#### Airplane
+## Getting Started
+
+### Prerequisites
+
+I built the emulator with this versions, greater version might work as well.
+
+- Python 3.10.X
+- pip 22.0.2
+
+### Dependencies (installation)
+
+If you wish to run the emulator you can install the dependencies as follows:
+
+```
+pip install -r requirements.txt
+```
+
+_Note: It's your choice whether you use a virtual environment or not._
+
+### Usage
+
+After installing the requirements you can run the emulator as follows:
+
+```
+python main.py --rom-path="./roms/rom.ch8"
+```
+
+If you wish to specify the sprite's color, and/or background color run the emulator as follows:
+
+```
+python main.py --color=0xffffff --bgcolor=0x000000 --rom-path="./roms/rom.ch8"
+```
+
+## Demos
+
+Here are some demos of the emulator running some ROMs I found online:
+
+### Airplane
 
 ![airplane](https://github.com/user-attachments/assets/9ef545b3-58c9-4cf5-8dcc-7783c4c1002e)
 
-#### Bad Kaijuju
+### Bad Kaijuju
 
 ![badkjj](https://github.com/user-attachments/assets/8d049a1b-bbdb-46ef-b2d6-1673e567221c)
 
-#### Flight Runner
+### Flight Runner
 ![frunner1](https://github.com/user-attachments/assets/4425950c-f1b9-4e2f-9a5b-2d97b5907205)
 
-#### RPS (Rock/Paper/Scissors)
+### RPS (Rock/Paper/Scissors)
 
 ![rps1](https://github.com/user-attachments/assets/6ab6d3e3-1e6c-4651-bd04-53c492bd6975)
 
-## VM Description
+## Interpreter / VM / "Emulator" Description
 
 ### Memory
 
@@ -88,3 +127,11 @@ The stack is used to store return addresses when subroutines are called. Modern 
 | FX29 | Set I to the address of the sprite for the character in VX |
 
 
+## Acknowledgments
+
+I couldn't have done this without the help of the following people and their resources:
+
+- Tobias V. Langhoff's [Chip-8 High Level Guide](https://tobiasvl.github.io/blog/write-a-chip-8-emulator/)
+- Cowgod's [Chip-8 Technical Reference v1.0](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM)
+- Timendu's [CHIP-8 test suite](https://github.com/Timendus/chip8-test-suite)
+- Kripod's [CHIP-8 ROM compilation](https://github.com/kripod/chip8-roms)
