@@ -8,8 +8,8 @@ import numpy as np
 import random
 
 
-config_sprite_color = 0xFFFFFF
-config_bg_color = 0x000000
+config_sprite_color = "0xFFFFFF"
+config_bg_color = "0x000000"
 config_rom_path = ""
 
 MEM_SIZE_KB = 4096
