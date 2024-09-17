@@ -8,6 +8,10 @@ import numpy as np
 import random
 
 
+config_sprite_color = 0xFFFFFF
+config_bg_color = 0x000000
+config_rom_path = ""
+
 MEM_SIZE_KB = 4096
 CLOCK_SPEED_HZ = 640
 CYCLE_DELAY = 1.0 / CLOCK_SPEED_HZ
@@ -21,82 +25,67 @@ delay_timer = 0
 sound_timer = 0
 
 font_list = [
-    [0xf0, 0x90, 0x90, 0x90, 0xf0],
+    [0xF0, 0x90, 0x90, 0x90, 0xF0],
     [0x20, 0x60, 0x20, 0x20, 0x70],
-    [0xf0, 0x10, 0xf0, 0x80, 0xf0],
-    [0x90, 0x90, 0xf0, 0x10, 0x10],
-    [0xf0, 0x80, 0xf0, 0x10, 0xf0],
-    [0xf0, 0x80, 0xf0, 0x90, 0xf0],
-    [0xf0, 0x10, 0x20, 0x40, 0x40],
-    [0xf0, 0x90, 0xf0, 0x90, 0xf0],
-    [0xf0, 0x90, 0xf0, 0x10, 0xf0],
-    [0xf0, 0x90, 0xf0, 0x90, 0x90],
-    [0xe0, 0x90, 0xe0, 0x90, 0xe0],
-    [0xf0, 0x80, 0x80, 0x80, 0xf0],
-    [0xe0, 0x90, 0x90, 0x90, 0xe0],
-    [0xf0, 0x80, 0xf0, 0x80, 0xf0],
-    [0xf0, 0x80, 0xf0, 0x80, 0x80]
+    [0xF0, 0x10, 0xF0, 0x80, 0xF0],
+    [0xF0, 0x10, 0xF0, 0x10, 0xF0],
+    [0x90, 0x90, 0xF0, 0x10, 0x10],
+    [0xF0, 0x80, 0xF0, 0x10, 0xF0],
+    [0xF0, 0x80, 0xF0, 0x90, 0xF0],
+    [0xF0, 0x10, 0x20, 0x40, 0x40],
+    [0xF0, 0x90, 0xF0, 0x90, 0xF0],
+    [0xF0, 0x90, 0xF0, 0x10, 0xF0],
+    [0xF0, 0x90, 0xF0, 0x90, 0x90],
+    [0xE0, 0x90, 0xE0, 0x90, 0xE0],
+    [0xF0, 0x80, 0x80, 0x80, 0xF0],
+    [0xE0, 0x90, 0x90, 0x90, 0xE0],
+    [0xF0, 0x80, 0xF0, 0x80, 0xF0],
+    [0xF0, 0x80, 0xF0, 0x80, 0x80]
 ]
 
 supported_keycodes = {
-    "56": 8,
-    "48": 0,
-    "49": 1,
-    "50": 2,
-    "51": 3,
-    "52": 4,
-    "53": 5,
-    "54": 6,
-    "55": 7,
-    "57": 9,
-    "97": 10,  # 'A'
-    "98": 11,  # 'B'
-    "99": 12,  # 'C'
-    "100": 13,  # 'D'
-    "101": 14,  # 'E'
-    "102": 15   # 'F'
+    "49": 0x1,
+    "50": 0x2,
+    "51": 0x3,
+    "52": 0xC,
+    "113": 0x4,
+    "119": 0x5,
+    "101": 0x6,
+    "114": 0xD,
+    "97": 0x7,
+    "115": 0x8,
+    "100": 0x9,
+    "102": 0xE,
+    "122": 0xA,
+    "120": 0x0,
+    "99": 0xB,
+    "118": 0xF
 }
+inverted_keycodes = {v: int(k) for k, v in supported_keycodes.items()}
 
-codes_key = {
-    "8": 56,
-    "0": 48,
-    "1": 49,
-    "2": 50,
-    "3": 51,
-    "4": 52,
-    "5": 53,
-    "6": 54,
-    "7": 55,
-    "9": 57,
-    "10": 97,
-    "11": 98,
-    "12": 99,
-    "13": 100,
-    "14": 101,
-    "15": 102
-}
 
 def scaled_draw(x, y, new_pixel_state, surface):
     global V
+    global config_sprite_color, config_bg_color
     x = x * 10
     y = y * 10
 
-    new_pixel_state = True if new_pixel_state == pygame.Color(255, 255, 255) else False
-    current_pixel_state = True if surface.get_at((x, y % 320)) == pygame.Color(255, 255, 255) else  False
+    new_pixel_state = True if new_pixel_state == pygame.Color(config_sprite_color) else False
+    current_pixel_state = True if surface.get_at((x, y % 320)) == pygame.Color(config_sprite_color) else  False
     pixel = current_pixel_state != new_pixel_state
 
     if (pixel):
-        pygame.draw.rect(surface, pygame.Color(255, 255, 255), [x, y, 10, 10]) 
+        pygame.draw.rect(surface, config_sprite_color, [x, y, 10, 10]) 
     else:
-        pygame.draw.rect(surface, pygame.Color(0, 0, 0), [x, y, 10, 10])
+        pygame.draw.rect(surface, config_bg_color, [x, y, 10, 10])
         if (current_pixel_state and new_pixel_state):
-            surface.set_at((x, y), pygame.Color(0, 0, 0))
+            surface.set_at((x, y), config_bg_color)
             V[0xF] = 1
 
 def load_rom(file_path):
     global memory
     with open(file_path, mode='rb') as file:
-        rom_data = file.read()  # Read the whole file as binary data
+        rom_data = file.read()
 
     for idx in range(len(rom_data)):
         byte = struct.unpack("B", rom_data[idx:idx + 1])[0]
@@ -128,6 +117,7 @@ def wait_for_keypress():
 
 def execute_instruction(instruction, surface):
     global V, stack, pc, I, memory, delay_timer, sound_timer
+    global config_bg_color
 
     lhs_subcode = instruction >> 12 & 0x000F
     rhs_subcode = instruction & 0x000F
@@ -138,7 +128,7 @@ def execute_instruction(instruction, surface):
     nnn = instruction & 0x0FFF
 
     if instruction == 0x00E0:
-        surface.fill(0)
+        surface.fill(config_bg_color)
         pygame.display.flip()
     elif instruction == 0x00EE:
         pc = stack.pop()
@@ -184,7 +174,7 @@ def execute_instruction(instruction, surface):
         binaries = [format(integer, '08b') for integer in mem_slice]
         for binary in binaries:
             for idx in range(8):
-                pixel_state = pygame.Color(255, 255, 255) if binary[idx] == '1' else pygame.Color(0, 0, 0)                
+                pixel_state = pygame.Color(config_sprite_color) if binary[idx] == '1' else config_bg_color               
                 # If you start drawing before the limit (width) then draw what you can draw, but
                 # once you pass the limit, stop
                 if (pos_y > 31 or pos_x + idx > 63):
@@ -262,10 +252,10 @@ def execute_instruction(instruction, surface):
     elif lhs_subcode == 0xE:
         key_codes = list(map(lambda e: e.key if e.type == pygame.KEYDOWN else None, pygame.event.get()))
         if (nn == 0xA1):
-            if (codes_key[str(V[vx])] not in key_codes):
+            if (inverted_keycodes[V[vx]] not in key_codes):
                 pc += 0x2
         elif (nn == 0x9E):
-            if (codes_key[str(V[vx])] in key_codes):
+            if (inverted_keycodes[V[vx]] in key_codes):
                 pc += 0x2
 
 def fetch():
@@ -298,7 +288,8 @@ def run():
     pygame.display.set_caption("Chip-8")
 
     surface = pygame.display.set_mode((640, 320))
-    
+    surface.fill(config_bg_color)
+
     pygame.event.clear()
     
     while running:
@@ -309,13 +300,47 @@ def run():
 
         if delay_timer > 0:
             delay_timer -= 1
-
         if sound_timer > 0:
             sound_timer -= 1
         
         if elapsed_time < CYCLE_DELAY:
             time.sleep(CYCLE_DELAY - elapsed_time)
 
+def parse_arg_options(argument):
+    splitted_args = argument.split("=")
+    option_name = splitted_args[0]
+    if (len(splitted_args) > 1):
+        option_value = splitted_args[1]
+        return (option_name, option_value)
+    return (option_name, None)
+
+def apply_config(parsed_options):
+    global config_rom_path, config_bg_color, config_sprite_color
+    for option in parsed_options:
+        option_val = option[1]
+        if "--color" in option:
+            if (len(option_val) < 8): raise ValueError
+            config_sprite_color = option_val[0:8]
+        if "--bgcolor" in option:
+            if (len(option_val) < 8): raise ValueError
+            config_bg_color = option_val[0:8]
+        if "--rom-path" in option:
+            config_rom_path = option_val
+
+
+parsed_options = [parse_arg_options(argument) for argument in sys.argv]
+try:
+    apply_config(parsed_options)
+except ValueError:
+    print("Error: color string should have at least 8 numbers.")
+    exit()
+
+try:
+    load_rom(config_rom_path)
+except FileNotFoundError:
+    print("Error: could not find rom file: " + config_rom_path)
+    exit()
+
 load_font(memory)
-load_rom("roms/Airplane.ch8")
+
 run()
