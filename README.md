@@ -1,15 +1,23 @@
 # Chip-8 Virtual Machine / Interpreter
 
-This is my quick and dirty implementation of the CHIP-8 virtual machine / interpreter from the 1970s, developed as a weekend project. Below is an overview of its features and specifications.
+Implementation of the CHIP-8 interpreter / virtual machine from the 1970s, that started as a weekend project; below is an overview of its features and specifications.
 
+# Demo
 
-#### IBM ROM
+#### Airplane
 
-![ibm rom demo](demos/ibm.png)
+![airplane](https://github.com/user-attachments/assets/9ef545b3-58c9-4cf5-8dcc-7783c4c1002e)
 
-#### Airplane ROM
+#### Bad Kaijuju
 
-![Hello](demos/airplane.gif)
+![badkjj](https://github.com/user-attachments/assets/8d049a1b-bbdb-46ef-b2d6-1673e567221c)
+
+#### Flight Runner
+![frunner1](https://github.com/user-attachments/assets/4425950c-f1b9-4e2f-9a5b-2d97b5907205)
+
+#### RPS (Rock/Paper/Scissors)
+
+![rps1](https://github.com/user-attachments/assets/6ab6d3e3-1e6c-4651-bd04-53c492bd6975)
 
 ## VM Description
 
@@ -17,11 +25,9 @@ This is my quick and dirty implementation of the CHIP-8 virtual machine / interp
 
 The CHIP-8 VM has 4096 memory addresses, each containing 8 bits, totaling 4KB of space. The first 512 bytes were traditionally reserved for the interpreter, but in modern implementations, this space is used for font data. The last 256 bytes are reserved for display refresh, and the preceding 96 bytes are allocated for the call stack, internal use, and other variables.
 
-
 ### Registers
 
 The CHIP-8 has 16 registers (V0...VF). VF is typically used as a flag for carry operations. Additionally, an address register (I) stores a 12-bit wide address.
-
 
 ### Font
 
@@ -31,24 +37,13 @@ The CHIP-8 virtual machine includes a built-in font with characters 0 through F.
 |:--:| 
 | *[Source](https://www.cs.columbia.edu/~sedwards/classes/2016/4840-spring/designs/Chip8.pdf)* |
 
-
-
-
 ### Display
 
-The display is 64x32 pixels tall, although in this implementation, it is scaled. Graphics are handled using the SDL wrapper for Python: Pygame.
-
+The display is 64x32 pixels tall, although in this implementation, it's scaled to 640x360. Graphics are handled using the SDL wrapper for Python: Pygame.
 
 ### Stack
 
-The stack is used to store return addresses when subroutines are called. Modern implementations do not have the 12-level nesting limitation of older versions.
-
-
-### Timers
-
-1. Delay timer
-2. Sound timer
-
+The stack is used to store return addresses when subroutines are called. Modern implementations do not have the 12-level nesting limitation of older versions. In this implementation I'm using an array outside of the vm's memory.
 
 ### Opcode table
 
