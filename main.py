@@ -109,9 +109,7 @@ def wait_for_keypress():
 
         event = pygame.event.wait()
 
-        if (event.type == pygame.QUIT):
-            pygame.quit()
-        elif (event.type == pygame.KEYUP):
+        if (event.type == pygame.KEYUP):
             if str(event.key) in supported_keycodes:
                 return supported_keycodes[str(event.key)]
 
@@ -294,7 +292,6 @@ def run():
     
     while running:
         start_time = time.time()
-        elapsed_time = time.time() - start_time
 
         cycle(surface)
 
@@ -303,6 +300,11 @@ def run():
         if sound_timer > 0:
             sound_timer -= 1
         
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        elapsed_time = time.time() - start_time
         if elapsed_time < CYCLE_DELAY:
             time.sleep(CYCLE_DELAY - elapsed_time)
 
