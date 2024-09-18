@@ -1,6 +1,6 @@
 ## About the Project
 
-This is an implementation of the CHIP-8 interpreter / VM / "Emulator" from the 1970s. Below is an overview of its features, specifications ,and the tools I used to implement it, as well as how to run it.
+This is an implementation of the CHIP-8 interpreter / VM / "Emulator" from the 1970s. Below is an overview of its features, specifications,and the tools I used to implement it, as well as how to run it.
 
 ### Built with
 
@@ -12,7 +12,7 @@ This is an implementation of the CHIP-8 interpreter / VM / "Emulator" from the 1
 
 ### Prerequisites
 
-I built the emulator with this versions, greater version might work as well.
+I built the emulator with this version, a greater version might work as well.
 
 - Python 3.10.X
 - pip 22.0.2
@@ -35,7 +35,7 @@ After installing the requirements you can run the emulator as follows:
 python main.py --rom-path="./roms/rom.ch8"
 ```
 
-If you wish to specify the sprite's color, and/or background color run the emulator as follows:
+If you wish to specify the sprite's color, or background color run the emulator as follows:
 
 ```
 python main.py --color=0xffffff --bgcolor=0x000000 --rom-path="./roms/rom.ch8"
@@ -64,7 +64,7 @@ Here are some demos of the emulator running some ROMs I found online:
 
 ### Memory
 
-The CHIP-8 VM has 4096 memory addresses, each containing 8 bits, totaling 4KB of space. The first 512 bytes were traditionally reserved for the interpreter, but in modern implementations, this space is used for font data. The last 256 bytes are reserved for display refresh, and the preceding 96 bytes are allocated for the call stack, internal use, and other variables.
+The CHIP-8 VM has 4096 memory addresses, each containing 8 bits, totaling 4KB of space. The first 512 bytes were traditionally reserved for the interpreter, but this space is used for font data in modern implementations. The last 256 bytes are reserved for display refresh, and the preceding 96 bytes are allocated for the call stack, internal use, and other variables.
 
 ### Registers
 
@@ -80,11 +80,11 @@ The CHIP-8 virtual machine includes a built-in font with characters 0 through F.
 
 ### Display
 
-The display is 64x32 pixels tall, although in this implementation, it's scaled to 640x360. Graphics are handled using the SDL wrapper for Python: Pygame.
+The display is 64x32 pixels tall, although it's scaled to 640x360 in this implementation. Graphics are handled using the SDL wrapper for Python: Pygame.
 
 ### Stack
 
-The stack is used to store return addresses when subroutines are called. Modern implementations do not have the 12-level nesting limitation of older versions. In this implementation I'm using an array outside of the vm's memory.
+The stack is used to store return addresses when subroutines are called. Modern implementations do not have the 12-level nesting limitation of older versions. In this implementation, I use an array outside the VM's memory.
 
 ### Opcode table
 
@@ -114,14 +114,14 @@ The stack is used to store return addresses when subroutines are called. Modern 
 | 8XYE | Shift VX left by 1; VF is set to the most significant bit of VX before the shift |
 | BXNN | Jump to address NNN plus V0 |
 | CXNN | Set VX to a random number AND NN |
-| EX9E | Skip next instruction if key stored in VX is pressed |
-| EXA1 | Skip next instruction if key stored in VX is not pressed |
+| EX9E | Skip the next instruction if the key stored in VX is pressed |
+| EXA1 | Skip the next instruction if the key stored in VX is not pressed |
 | FX07 | Set VX to value of delay timer |
 | FX15 | Set delay timer to VX |
 | FX18 | Set sound timer to VX |
-| FX55 | Store V0 to VX in memory starting at address I |
+| FX55 | Store V0 to VX in memory starting at the address in I |
 | FX65 | Load V0 to VX from memory starting at address I |
-| FX33 | Store binary-coded decimal representation of VX at address I, I+1, and I+2 |
+| FX33 | Store binary-coded decimal representation of VX at addresses I, I+1, and I+2 |
 | FX1E | Add VX to I; VF is set to 1 on overflow, 0 otherwise |
 | FX0A | Wait for keypress, store key in VX |
 | FX29 | Set I to the address of the sprite for the character in VX |
