@@ -6,7 +6,8 @@ import os
 from pygame.locals import *
 import numpy as np
 import random
-
+from tkinter import *
+from tkinter import filedialog
 
 config_sprite_color = "0xFFFFFF"
 config_bg_color = "0x000000"
@@ -336,6 +337,31 @@ try:
 except ValueError:
     print("Error: color string should have at least 8 numbers.")
     exit()
+
+
+
+def open_file():
+    global config_rom_path
+    filepath = filedialog.askopenfilename(
+        title="Open File",
+        filetypes=(("Chip-8 Roms", "*.ch8"), ("All Files", "*.*"))
+    )
+
+    config_rom_path = filepath
+    root.destroy()
+
+root = Tk()
+
+mainmenu = Menu(root)
+
+filemenu = Menu(mainmenu, tearoff=0)
+filemenu.add_command(label="Open", command=open_file)
+filemenu.add_separator()
+filemenu.add_command(label="Exit", command=root.destroy)
+mainmenu.add_cascade(label="File", menu=filemenu)
+
+root.config(menu=mainmenu)
+root.mainloop()
 
 try:
     load_rom(config_rom_path)
